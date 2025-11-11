@@ -45,7 +45,7 @@ func RunAnchorsChains() {
 	go threads.LeaderRotationThread()
 
 	//✅ 10.Start monitor anchors health
-	go threads.AnchorsHealthChecker()
+	go threads.HealthCheckerThread()
 
 	//___________________ RUN SERVERS - WEBSOCKET AND HTTP __________________
 
@@ -84,7 +84,6 @@ func prepareAnchorsChains() error {
 	}
 
 	databases.BLOCKS = utils.OpenDb("BLOCKS")
-	databases.STATE = utils.OpenDb("STATE")
 	databases.EPOCH_DATA = utils.OpenDb("EPOCH_DATA")
 	databases.APPROVEMENT_THREAD_METADATA = utils.OpenDb("APPROVEMENT_THREAD_METADATA")
 	databases.FINALIZATION_VOTING_STATS = utils.OpenDb("FINALIZATION_VOTING_STATS")
@@ -118,18 +117,14 @@ func prepareAnchorsChains() error {
 			return fmt.Errorf("unmarshal APPROVEMENT_THREAD metadata: %w", err)
 		}
 
-		if atHandler.ValidatorsStoragesCache == nil {
-			atHandler.ValidatorsStoragesCache = make(map[string]*structures.ValidatorStorage)
-		}
-
 		handlers.APPROVEMENT_THREAD_METADATA.Handler = atHandler
 
 	}
 
 	if handlers.APPROVEMENT_THREAD_METADATA.Handler.CoreMajorVersion == -1 {
 
-		if err := setGenesisToState(); err != nil {
-			return fmt.Errorf("write genesis to state: %w", err)
+		if err := loadGenesis(); err != nil {
+			return fmt.Errorf("load genesis issue: %w", err)
 		}
 
 		serializedApprovementThread, err := json.Marshal(handlers.APPROVEMENT_THREAD_METADATA.Handler)
@@ -147,23 +142,21 @@ func prepareAnchorsChains() error {
 	return nil
 }
 
-func setGenesisToState() error {
+func loadGenesis() error {
 
 	approvementThreadBatch := new(leveldb.Batch)
 
 	epochTimestamp := globals.GENESIS.FirstEpochStartTimestamp
 
-	validatorsRegistryForEpochHandler := []string{}
+	anchorsRegistryForEpochHandler := []string{}
 
-	validatorsRegistryForEpochHandler2 := []string{}
+	// __________________________________ Load info about anchors __________________________________
 
-	// __________________________________ Load info about validators __________________________________
+	for _, anchorStorage := range globals.GENESIS.Validators {
 
-	for _, validatorStorage := range globals.GENESIS.Validators {
+		validatorPubkey := anchorStorage.Pubkey
 
-		validatorPubkey := validatorStorage.Pubkey
-
-		serializedStorage, err := json.Marshal(validatorStorage)
+		serializedStorage, err := json.Marshal(anchorStorage)
 
 		if err != nil {
 			return err
@@ -171,9 +164,7 @@ func setGenesisToState() error {
 
 		approvementThreadBatch.Put([]byte(validatorPubkey+"_VALIDATOR_STORAGE"), serializedStorage)
 
-		validatorsRegistryForEpochHandler = append(validatorsRegistryForEpochHandler, validatorPubkey)
-
-		validatorsRegistryForEpochHandler2 = append(validatorsRegistryForEpochHandler2, validatorPubkey)
+		anchorsRegistryForEpochHandler = append(anchorsRegistryForEpochHandler, validatorPubkey)
 
 	}
 
@@ -191,7 +182,7 @@ func setGenesisToState() error {
 	epochHandlerForApprovementThread := structures.EpochDataHandler{
 		Id:                 0,
 		Hash:               initEpochHash,
-		ValidatorsRegistry: validatorsRegistryForEpochHandler,
+		ValidatorsRegistry: anchorsRegistryForEpochHandler,
 		StartTimestamp:     epochTimestamp,
 		Quorum:             []string{}, // will be assigned
 		LeadersSequence:    []string{}, // will be assigned

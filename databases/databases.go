@@ -7,7 +7,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-var BLOCKS, STATE, EPOCH_DATA, APPROVEMENT_THREAD_METADATA, FINALIZATION_VOTING_STATS *leveldb.DB
+var BLOCKS, EPOCH_DATA, APPROVEMENT_THREAD_METADATA, FINALIZATION_VOTING_STATS *leveldb.DB
 
 // CloseAll safely closes all initialized LevelDB instances
 func CloseAll() error {
@@ -19,7 +19,6 @@ func CloseAll() error {
 
 	databases := []namedDB{
 		{name: "BLOCKS", db: &BLOCKS},
-		{name: "STATE", db: &STATE},
 		{name: "EPOCH_DATA", db: &EPOCH_DATA},
 		{name: "APPROVEMENT_THREAD_METADATA", db: &APPROVEMENT_THREAD_METADATA},
 		{name: "FINALIZATION_VOTING_STATS", db: &FINALIZATION_VOTING_STATS},

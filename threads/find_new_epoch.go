@@ -23,8 +23,6 @@ import (
 
 type FirstBlockDataWithAefp struct {
 	FirstBlockCreator, FirstBlockHash string
-
-	Aefp *structures.AggregatedEpochFinalizationProof
 }
 
 var AEFP_HTTP_CLIENT = &http.Client{Timeout: 2 * time.Second}

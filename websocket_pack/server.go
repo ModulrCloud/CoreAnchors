@@ -62,7 +62,7 @@ func (h *Handler) OnMessage(connection *gws.Conn, message *gws.Message) {
 			return
 		}
 
-		GetBlockWithProof(req, connection)
+		GetBlockWithAggregatedFinalizationProof(req, connection)
 
 	default:
 		connection.WriteMessage(gws.OpcodeText, []byte(`{"error":"unknown_type"}`))

@@ -1,0 +1,5 @@
+package threads
+
+func HealthCheckerThread() {
+
+}

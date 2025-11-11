@@ -13,7 +13,6 @@ var APPROVEMENT_THREAD_METADATA = struct {
 	Handler structures.ApprovementThreadMetadataHandler
 }{
 	Handler: structures.ApprovementThreadMetadataHandler{
-		CoreMajorVersion:        -1,
-		ValidatorsStoragesCache: make(map[string]*structures.ValidatorStorage),
+		CoreMajorVersion: -1,
 	},
 }

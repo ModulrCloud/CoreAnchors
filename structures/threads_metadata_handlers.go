@@ -7,10 +7,9 @@ type LogicalThread interface {
 }
 
 type ApprovementThreadMetadataHandler struct {
-	CoreMajorVersion        int                          `json:"coreMajorVersion"`
-	NetworkParameters       NetworkParameters            `json:"networkParameters"`
-	EpochDataHandler        EpochDataHandler             `json:"epoch"`
-	ValidatorsStoragesCache map[string]*ValidatorStorage `json:"-"`
+	CoreMajorVersion  int               `json:"coreMajorVersion"`
+	NetworkParameters NetworkParameters `json:"networkParameters"`
+	EpochDataHandler  EpochDataHandler  `json:"epoch"`
 }
 
 func (handler *ApprovementThreadMetadataHandler) GetCoreMajorVersion() int {

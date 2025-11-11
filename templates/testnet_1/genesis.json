@@ -25,28 +25,5 @@
             "validatorURL": "http://localhost:7332",
             "wssValidatorURL": "ws://localhost:9999"
         }
-    ],
-    
-    "STATE": {
-        "9GQ46rqY238rk2neSwgidap9ww5zbAN4dyqyC7j5ZnBK": {
-            "balance": 20000000000,
-            "nonce": 0
-        },
-        "6XvZpuCDjdvSuot3eLr24C1wqzcf2w4QqeDh9BnDKsNE": {
-            "balance": 20000000000,
-            "nonce": 0
-        },
-        "GUbYLN5NqmRocMBHqS183r2FQRoUjhx1p5nKyyUBpntQ": {
-            "balance": 20000000000,
-            "nonce": 0
-        },
-        "3JAeBnsMedzxjCMNWQYcAXtwGVE9A5DBQyXgWBujtL9R": {
-            "balance": 20000000000,
-            "nonce": 0
-        },
-        "EGU4u3Anwahbtbx8F1ZZgFQSg2u49EkrkqMERT9r3q1o": {
-            "balance": 20000000000,
-            "nonce": 0
-        }
-    }
+    ]
 }
