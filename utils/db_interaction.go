@@ -20,9 +20,9 @@ func OpenDb(dbName string) *leveldb.DB {
 	return db
 }
 
-func GetValidatorFromApprovementThreadState(validatorPubkey string) *structures.ValidatorStorage {
+func GetValidatorFromApprovementThreadState(validatorPubkey string) *structures.AnchorsStorage {
 
-	validatorStorageKey := validatorPubkey + "_VALIDATOR_STORAGE"
+	validatorStorageKey := validatorPubkey + "_ANCHOR_STORAGE"
 
 	if val, ok := handlers.APPROVEMENT_THREAD_METADATA.Handler.ValidatorsStoragesCache[validatorStorageKey]; ok {
 		return val
@@ -34,7 +34,7 @@ func GetValidatorFromApprovementThreadState(validatorPubkey string) *structures.
 		return nil
 	}
 
-	var validatorStorage structures.ValidatorStorage
+	var validatorStorage structures.AnchorsStorage
 
 	err = json.Unmarshal(data, &validatorStorage)
 

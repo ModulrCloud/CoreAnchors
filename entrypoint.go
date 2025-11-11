@@ -152,9 +152,9 @@ func loadGenesis() error {
 
 	// __________________________________ Load info about anchors __________________________________
 
-	for _, anchorStorage := range globals.GENESIS.Validators {
+	for _, anchorStorage := range globals.GENESIS.Anchors {
 
-		validatorPubkey := anchorStorage.Pubkey
+		anchorPubkey := anchorStorage.Pubkey
 
 		serializedStorage, err := json.Marshal(anchorStorage)
 
@@ -162,9 +162,9 @@ func loadGenesis() error {
 			return err
 		}
 
-		approvementThreadBatch.Put([]byte(validatorPubkey+"_VALIDATOR_STORAGE"), serializedStorage)
+		approvementThreadBatch.Put([]byte(anchorPubkey+"_ANCHOR_STORAGE"), serializedStorage)
 
-		anchorsRegistryForEpochHandler = append(anchorsRegistryForEpochHandler, validatorPubkey)
+		anchorsRegistryForEpochHandler = append(anchorsRegistryForEpochHandler, anchorPubkey)
 
 	}
 

@@ -129,13 +129,13 @@ func OpenWebsocketConnectionsWithQuorum(quorum []string, wsConnMap map[string]*w
 	// Establish new connections for each validator in the quorum
 	for _, validatorPubkey := range quorum {
 		// Fetch validator metadata
-		raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(validatorPubkey+"_VALIDATOR_STORAGE"), nil)
+		raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(validatorPubkey+"_ANCHOR_STORAGE"), nil)
 		if err != nil {
 			continue
 		}
 
 		// Parse metadata
-		var validatorStorage structures.ValidatorStorage
+		var validatorStorage structures.AnchorsStorage
 		if err := json.Unmarshal(raw, &validatorStorage); err != nil {
 			continue
 		}
@@ -265,11 +265,11 @@ func getWriteMu(id string) *sync.Mutex {
 func reconnectOnce(pubkey string, wsConnMap map[string]*websocket.Conn) {
 
 	// Get validator metadata
-	raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(pubkey+"_VALIDATOR_STORAGE"), nil)
+	raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(pubkey+"_ANCHOR_STORAGE"), nil)
 	if err != nil {
 		return
 	}
-	var validatorStorage structures.ValidatorStorage
+	var validatorStorage structures.AnchorsStorage
 	if err := json.Unmarshal(raw, &validatorStorage); err != nil || validatorStorage.WssValidatorUrl == "" {
 		return
 	}

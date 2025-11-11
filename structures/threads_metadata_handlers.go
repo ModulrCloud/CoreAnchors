@@ -1,19 +1,13 @@
 package structures
 
 type LogicalThread interface {
-	GetCoreMajorVersion() int
 	GetNetworkParams() NetworkParameters
 	GetEpochHandler() EpochDataHandler
 }
 
 type ApprovementThreadMetadataHandler struct {
-	CoreMajorVersion  int               `json:"coreMajorVersion"`
 	NetworkParameters NetworkParameters `json:"networkParameters"`
 	EpochDataHandler  EpochDataHandler  `json:"epoch"`
-}
-
-func (handler *ApprovementThreadMetadataHandler) GetCoreMajorVersion() int {
-	return handler.CoreMajorVersion
 }
 
 func (handler *ApprovementThreadMetadataHandler) GetNetworkParams() NetworkParameters {

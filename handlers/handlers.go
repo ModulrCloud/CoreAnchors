@@ -12,7 +12,5 @@ var APPROVEMENT_THREAD_METADATA = struct {
 	RWMutex sync.RWMutex
 	Handler structures.ApprovementThreadMetadataHandler
 }{
-	Handler: structures.ApprovementThreadMetadataHandler{
-		CoreMajorVersion: -1,
-	},
+	Handler: structures.ApprovementThreadMetadataHandler{},
 }
