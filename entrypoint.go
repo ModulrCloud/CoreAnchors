@@ -41,10 +41,7 @@ func RunAnchorsChains() {
 	//✅ 3.Start to generate blocks
 	go threads.BlocksGenerationThread()
 
-	//✅ 4.Start a separate thread to work with voting for blocks in a sync way (for security)
-	go threads.LeaderRotationThread()
-
-	//✅ 5.Start monitor anchors health
+	//✅ 4.Start monitor anchors health
 	go threads.HealthCheckerThread()
 
 	//___________________ RUN SERVERS - WEBSOCKET AND HTTP __________________
@@ -178,13 +175,11 @@ func loadGenesis() error {
 	initEpochHash := utils.Blake3(hashInput)
 
 	epochHandlerForApprovementThread := structures.EpochDataHandler{
-		Id:                 0,
-		Hash:               initEpochHash,
-		AnchorsRegistry:    anchorsRegistryForEpochHandler,
-		StartTimestamp:     epochTimestamp,
-		Quorum:             []string{}, // will be assigned
-		LeadersSequence:    []string{}, // will be assigned
-		CurrentLeaderIndex: 0,
+		Id:              0,
+		Hash:            initEpochHash,
+		AnchorsRegistry: anchorsRegistryForEpochHandler,
+		StartTimestamp:  epochTimestamp,
+		Quorum:          []string{}, // will be assigned
 	}
 
 	// Assign quorum - pseudorandomly and in deterministic way

@@ -225,13 +225,11 @@ func EpochRotationThread() {
 						nextEpochQuorumSize := handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.QuorumSize
 
 						nextEpochHandler := structures.EpochDataHandler{
-							Id:                 nextEpochId,
-							Hash:               nextEpochHash,
-							AnchorsRegistry:    epochHandlerRef.AnchorsRegistry,
-							Quorum:             utils.GetCurrentEpochQuorum(epochHandlerRef, nextEpochQuorumSize, nextEpochHash),
-							LeadersSequence:    []string{},
-							StartTimestamp:     epochHandlerRef.StartTimestamp + uint64(handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.EpochDuration),
-							CurrentLeaderIndex: 0,
+							Id:              nextEpochId,
+							Hash:            nextEpochHash,
+							AnchorsRegistry: epochHandlerRef.AnchorsRegistry,
+							Quorum:          utils.GetCurrentEpochQuorum(epochHandlerRef, nextEpochQuorumSize, nextEpochHash),
+							StartTimestamp:  epochHandlerRef.StartTimestamp + uint64(handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.EpochDuration),
 						}
 
 						utils.SetLeadersSequence(&nextEpochHandler, nextEpochHash)
@@ -247,8 +245,6 @@ func EpochRotationThread() {
 
 						atomicBatch.Put([]byte("EPOCH_DATA:"+strconv.Itoa(nextEpochId)), jsonedNextEpochDataHandler)
 
-						writeLatestBatchIndexBatch(atomicBatch, latestBatchIndex)
-
 						// Finally - assign new handler
 
 						handlers.APPROVEMENT_THREAD_METADATA.Handler.EpochDataHandler = nextEpochHandler
@@ -262,10 +258,6 @@ func EpochRotationThread() {
 						// Clean cache
 
 						clear(handlers.APPROVEMENT_THREAD_METADATA.Handler.ValidatorsStoragesCache)
-
-						// Clean in-memory helpful object
-
-						AEFP_AND_FIRST_BLOCK_DATA = FirstBlockDataWithAefp{}
 
 						if batchCommitErr := databases.APPROVEMENT_THREAD_METADATA.Write(atomicBatch, nil); batchCommitErr != nil {
 
