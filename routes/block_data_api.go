@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
 
 	"github.com/valyala/fasthttp"
 )

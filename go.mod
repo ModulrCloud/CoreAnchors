@@ -1,4 +1,4 @@
-module github.com/ModulrCloud/ModulrAnchorsCore
+module github.com/modulrcloud/modulr-anchors-core
 
 go 1.24.0
 

@@ -2,100 +2,21 @@ package threads
 
 import (
 	"context"
-	"encoding/binary"
 	"encoding/json"
-	"io"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/block_pack"
-	"github.com/ModulrCloud/ModulrAnchorsCore/cryptography"
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
-	"github.com/ModulrCloud/ModulrAnchorsCore/globals"
-	"github.com/ModulrCloud/ModulrAnchorsCore/handlers"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
-	"github.com/ModulrCloud/ModulrAnchorsCore/utils"
+	"github.com/modulrcloud/modulr-anchors-core/block_pack"
+	"github.com/modulrcloud/modulr-anchors-core/cryptography"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/globals"
+	"github.com/modulrcloud/modulr-anchors-core/handlers"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
+	"github.com/modulrcloud/modulr-anchors-core/utils"
 
 	"github.com/syndtr/goleveldb/leveldb"
 )
-
-type FirstBlockDataWithAefp struct {
-	FirstBlockCreator, FirstBlockHash string
-}
-
-var AEFP_HTTP_CLIENT = &http.Client{Timeout: 2 * time.Second}
-
-var AEFP_AND_FIRST_BLOCK_DATA FirstBlockDataWithAefp
-
-func fetchAefp(ctx context.Context, url string, quorum []string, majority int, epochFullID string, resultCh chan<- *structures.AggregatedEpochFinalizationProof) {
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-
-	if err != nil {
-		return
-	}
-
-	resp, err := AEFP_HTTP_CLIENT.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		io.Copy(io.Discard, resp.Body)
-		return
-	}
-
-	var aefp structures.AggregatedEpochFinalizationProof
-	if err := json.NewDecoder(resp.Body).Decode(&aefp); err != nil {
-		return
-	}
-	if utils.VerifyAggregatedEpochFinalizationProof(&aefp, quorum, majority, epochFullID) {
-		select {
-		case resultCh <- &aefp:
-		case <-ctx.Done():
-		}
-	}
-}
-
-// Reads latest batch index from LevelDB.
-// Supports legacy decimal-string format and migrates it to 8-byte BigEndian.
-func readLatestBatchIndex() int64 {
-
-	raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte("LATEST_BATCH_INDEX"), nil)
-
-	if err != nil || len(raw) == 0 {
-		return 0
-	}
-
-	if len(raw) == 8 {
-		return int64(binary.BigEndian.Uint64(raw))
-	}
-
-	// Legacy format: decimal string. Try to parse and migrate.
-	if v, perr := strconv.ParseInt(string(raw), 10, 64); perr == nil && v >= 0 {
-		var buf [8]byte
-		binary.BigEndian.PutUint64(buf[:], uint64(v))
-		_ = databases.APPROVEMENT_THREAD_METADATA.Put([]byte("LATEST_BATCH_INDEX"), buf[:], nil)
-		return v
-	}
-
-	return 0
-
-}
-
-// Writes latest batch index to LevelDB as 8-byte BigEndian.
-func writeLatestBatchIndexBatch(batch *leveldb.Batch, v int64) {
-
-	var buf [8]byte
-
-	binary.BigEndian.PutUint64(buf[:], uint64(v))
-
-	batch.Put([]byte("LATEST_BATCH_INDEX"), buf[:])
-
-}
 
 func EpochRotationThread() {
 

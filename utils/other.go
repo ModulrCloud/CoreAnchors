@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
 
 	"lukechampine.com/blake3"
 )
@@ -98,7 +98,7 @@ func GetRandomFromSlice(arr []structures.QuorumMemberData) structures.QuorumMemb
 
 }
 
-func EpochStillFresh(thread structures.LogicalThread) bool {
+func EpochStillFresh(thread *structures.ApprovementThreadMetadataHandler) bool {
 
 	return (thread.GetEpochHandler().StartTimestamp + uint64(thread.GetNetworkParams().EpochDuration)) > uint64(GetUTCTimestampInMilliSeconds())
 

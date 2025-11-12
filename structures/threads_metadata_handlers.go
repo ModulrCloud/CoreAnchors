@@ -1,10 +1,5 @@
 package structures
 
-type LogicalThread interface {
-	GetNetworkParams() NetworkParameters
-	GetEpochHandler() EpochDataHandler
-}
-
 type ApprovementThreadMetadataHandler struct {
 	NetworkParameters NetworkParameters `json:"networkParameters"`
 	EpochDataHandler  EpochDataHandler  `json:"epoch"`

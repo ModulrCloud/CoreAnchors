@@ -1,8 +1,8 @@
 package websocket_pack
 
 import (
-	"github.com/ModulrCloud/ModulrAnchorsCore/block_pack"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
+	"github.com/modulrcloud/modulr-anchors-core/block_pack"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
 )
 
 type WsFinalizationProofRequest struct {

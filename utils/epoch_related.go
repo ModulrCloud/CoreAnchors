@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"strconv"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
 )
 
 type CurrentLeaderData struct {

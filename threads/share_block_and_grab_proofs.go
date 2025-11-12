@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/block_pack"
-	"github.com/ModulrCloud/ModulrAnchorsCore/cryptography"
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
-	"github.com/ModulrCloud/ModulrAnchorsCore/globals"
-	"github.com/ModulrCloud/ModulrAnchorsCore/handlers"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
-	"github.com/ModulrCloud/ModulrAnchorsCore/utils"
-	"github.com/ModulrCloud/ModulrAnchorsCore/websocket_pack"
+	"github.com/modulrcloud/modulr-anchors-core/block_pack"
+	"github.com/modulrcloud/modulr-anchors-core/cryptography"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/globals"
+	"github.com/modulrcloud/modulr-anchors-core/handlers"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
+	"github.com/modulrcloud/modulr-anchors-core/utils"
+	"github.com/modulrcloud/modulr-anchors-core/websocket_pack"
 
 	"github.com/gorilla/websocket"
 )

@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
-	"github.com/ModulrCloud/ModulrAnchorsCore/globals"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/globals"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
 
 	"github.com/gorilla/websocket"
 )

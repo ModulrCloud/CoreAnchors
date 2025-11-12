@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ModulrCloud/ModulrAnchorsCore/cryptography"
-	"github.com/ModulrCloud/ModulrAnchorsCore/databases"
-	"github.com/ModulrCloud/ModulrAnchorsCore/structures"
+	"github.com/modulrcloud/modulr-anchors-core/cryptography"
+	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/structures"
 )
 
 func VerifyAggregatedFinalizationProof(proof *structures.AggregatedFinalizationProof, epochHandler *structures.EpochDataHandler) bool {
