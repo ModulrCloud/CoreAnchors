@@ -55,9 +55,7 @@ func BlocksSharingAndProofsGrabingThread() {
 
 		epochHandlerRef := &handlers.APPROVEMENT_THREAD_METADATA.Handler.EpochDataHandler
 
-		currentLeaderPubKey := epochHandlerRef.LeadersSequence[epochHandlerRef.CurrentLeaderIndex]
-
-		if currentLeaderPubKey != globals.CONFIGURATION.PublicKey || !utils.EpochStillFresh(&handlers.APPROVEMENT_THREAD_METADATA.Handler) {
+		if !utils.EpochStillFresh(&handlers.APPROVEMENT_THREAD_METADATA.Handler) {
 
 			handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RUnlock()
 

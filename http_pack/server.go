@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/modulrcloud/modulr-anchors-core/globals"
-	"github.com/modulrcloud/modulr-anchors-core/routes"
 	"github.com/modulrcloud/modulr-anchors-core/utils"
 
 	"github.com/fasthttp/router"
@@ -16,9 +15,9 @@ func createRouter() fasthttp.RequestHandler {
 
 	r := router.New()
 
-	r.GET("/block/{id}", routes.GetBlockById)
+	r.GET("/block/{id}", GetBlockById)
 
-	r.GET("/aggregated_finalization_proof/{blockId}", routes.GetAggregatedFinalizationProof)
+	r.GET("/aggregated_finalization_proof/{blockId}", GetAggregatedFinalizationProof)
 
 	return r.Handler
 }

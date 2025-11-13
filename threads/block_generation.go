@@ -11,18 +11,8 @@ import (
 	"github.com/modulrcloud/modulr-anchors-core/handlers"
 	"github.com/modulrcloud/modulr-anchors-core/utils"
 
-	"github.com/gorilla/websocket"
 	"github.com/syndtr/goleveldb/leveldb"
 )
-
-type DoubleMap = map[string]map[string][]byte
-
-type RotationProofCollector struct {
-	wsConnMap map[string]*websocket.Conn
-	quorum    []string
-	majority  int
-	timeout   time.Duration
-}
 
 func BlocksGenerationThread() {
 
@@ -56,13 +46,11 @@ func generateBlock() {
 
 	epochIndex := epochHandlerRef.Id
 
-	currentLeaderPubKey := epochHandlerRef.LeadersSequence[epochHandlerRef.CurrentLeaderIndex]
-
 	PROOFS_GRABBER_MUTEX.RLock()
 
 	// Safe "if" branch to prevent unnecessary blocks generation
 
-	shouldGenerateBlocks := currentLeaderPubKey == globals.CONFIGURATION.PublicKey && handlers.GENERATION_THREAD_METADATA.NextIndex <= PROOFS_GRABBER.AcceptedIndex+1
+	shouldGenerateBlocks := handlers.GENERATION_THREAD_METADATA.NextIndex <= PROOFS_GRABBER.AcceptedIndex+1
 
 	shouldRotateEpochOnGenerationThread := handlers.GENERATION_THREAD_METADATA.EpochFullId != epochFullID
 

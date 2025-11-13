@@ -166,6 +166,7 @@ func loadGenesis() error {
 	handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters = globals.GENESIS.NetworkParameters.CopyNetworkParameters()
 
 	// Commit changes
+
 	if err := databases.APPROVEMENT_THREAD_METADATA.Write(approvementThreadBatch, nil); err != nil {
 		return err
 	}
@@ -186,9 +187,7 @@ func loadGenesis() error {
 
 	epochHandlerForApprovementThread.Quorum = utils.GetCurrentEpochQuorum(&epochHandlerForApprovementThread, handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.QuorumSize, initEpochHash)
 
-	// Now set the block generators for epoch pseudorandomly and in deterministic way
-
-	utils.SetLeadersSequence(&epochHandlerForApprovementThread, initEpochHash)
+	// Finally - assign a handler
 
 	handlers.APPROVEMENT_THREAD_METADATA.Handler.EpochDataHandler = epochHandlerForApprovementThread
 

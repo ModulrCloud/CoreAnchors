@@ -232,8 +232,6 @@ func EpochRotationThread() {
 							StartTimestamp:  epochHandlerRef.StartTimestamp + uint64(handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.EpochDuration),
 						}
 
-						utils.SetLeadersSequence(&nextEpochHandler, nextEpochHash)
-
 						nextEpochDataHandler := structures.NextEpochDataHandler{
 							NextEpochHash:               nextEpochHash,
 							NextEpochValidatorsRegistry: nextEpochHandler.AnchorsRegistry,
