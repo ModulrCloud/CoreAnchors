@@ -47,7 +47,7 @@ var BLOCK_TO_SHARE *block_pack.Block = &block_pack.Block{
 
 var QUORUM_WAITER_FOR_FINALIZATION_PROOFS *utils.QuorumWaiter
 
-func BlocksSharingAndProofsGrabingThread() {
+func ShareBlockAndGetProofsThread() {
 
 	for {
 

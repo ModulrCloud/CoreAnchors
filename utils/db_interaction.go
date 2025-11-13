@@ -20,7 +20,7 @@ func OpenDb(dbName string) *leveldb.DB {
 	return db
 }
 
-func GetValidatorFromApprovementThreadState(validatorPubkey string) *structures.AnchorsStorage {
+func GetAnchorFromApprovementThreadState(validatorPubkey string) *structures.AnchorsStorage {
 
 	validatorStorageKey := validatorPubkey + "_ANCHOR_STORAGE"
 

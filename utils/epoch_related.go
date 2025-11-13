@@ -38,9 +38,9 @@ func GetQuorumUrlsAndPubkeys(epochHandler *structures.EpochDataHandler) []struct
 
 	for _, pubKey := range epochHandler.Quorum {
 
-		validatorStorage := GetValidatorFromApprovementThreadState(pubKey)
+		validatorStorage := GetAnchorFromApprovementThreadState(pubKey)
 
-		toReturn = append(toReturn, structures.QuorumMemberData{PubKey: pubKey, Url: validatorStorage.ValidatorUrl})
+		toReturn = append(toReturn, structures.QuorumMemberData{PubKey: pubKey, Url: validatorStorage.AnchorUrl})
 
 	}
 
@@ -73,7 +73,7 @@ func GetCurrentEpochQuorum(epochHandler *structures.EpochDataHandler, quorumSize
 
 	for _, validatorPubKey := range epochHandler.AnchorsRegistry {
 
-		validatorData := GetValidatorFromApprovementThreadState(validatorPubKey)
+		validatorData := GetAnchorFromApprovementThreadState(validatorPubKey)
 
 		totalStakeByThisValidator := validatorData.TotalStaked // uint64
 

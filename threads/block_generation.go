@@ -79,9 +79,11 @@ func generateBlock() {
 			return
 		}
 
-		extraData := block_pack.ExtraDataToBlock{}
+		extraData := make(map[string]string, len(globals.CONFIGURATION.ExtraDataToBlock))
 
-		extraData.Rest = globals.CONFIGURATION.ExtraDataToBlock
+		for key, value := range globals.CONFIGURATION.ExtraDataToBlock {
+			extraData[key] = value
+		}
 
 		blockDbAtomicBatch := new(leveldb.Batch)
 

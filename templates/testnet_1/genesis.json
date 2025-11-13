@@ -13,8 +13,8 @@
     "ANCHORS": [
         {
             "pubkey": "9GQ46rqY238rk2neSwgidap9ww5zbAN4dyqyC7j5ZnBK",
-            "validatorURL": "http://localhost:7332",
-            "wssValidatorURL": "ws://localhost:9999"
+            "anchorURL": "http://localhost:7332",
+            "wssAnchorURL": "ws://localhost:9999"
         }
     ]
 }

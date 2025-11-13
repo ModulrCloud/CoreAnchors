@@ -19,9 +19,9 @@ func (src *NetworkParameters) CopyNetworkParameters() NetworkParameters {
 }
 
 type AnchorsStorage struct {
-	Pubkey          string `json:"pubkey"`
-	ValidatorUrl    string `json:"validatorURL"`
-	WssValidatorUrl string `json:"wssValidatorURL"`
+	Pubkey       string `json:"pubkey"`
+	AnchorUrl    string `json:"anchorURL"`
+	WssAnchorUrl string `json:"wssAnchorURL"`
 }
 
 type Genesis struct {

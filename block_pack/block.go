@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -18,16 +19,35 @@ import (
 )
 
 type Block struct {
-	Creator   string           `json:"creator"`
-	Time      int64            `json:"time"`
-	Epoch     string           `json:"epoch"`
-	ExtraData ExtraDataToBlock `json:"extraData"`
-	Index     int              `json:"index"`
-	PrevHash  string           `json:"prevHash"`
-	Sig       string           `json:"sig"`
+	Creator   string            `json:"creator"`
+	Time      int64             `json:"time"`
+	Epoch     string            `json:"epoch"`
+	ExtraData map[string]string `json:"extraData"`
+	Index     int               `json:"index"`
+	PrevHash  string            `json:"prevHash"`
+	Sig       string            `json:"sig"`
 }
 
-func NewBlock(extraData ExtraDataToBlock, epochFullID string) *Block {
+func formatExtraData(extraData map[string]string) string {
+	if len(extraData) == 0 {
+		return ""
+	}
+
+	keys := make([]string, 0, len(extraData))
+	for key := range extraData {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	parts := make([]string, 0, len(keys))
+	for _, key := range keys {
+		parts = append(parts, key+"="+extraData[key])
+	}
+
+	return strings.Join(parts, ",")
+}
+
+func NewBlock(extraData map[string]string, epochFullID string) *Block {
 	return &Block{
 		Creator:   globals.CONFIGURATION.PublicKey,
 		Time:      utils.GetUTCTimestampInMilliSeconds(),
@@ -46,6 +66,7 @@ func (block *Block) GetHash() string {
 		strconv.FormatInt(block.Time, 10),
 		globals.GENESIS.NetworkId,
 		block.Epoch,
+		formatExtraData(block.ExtraData),
 		strconv.Itoa(block.Index),
 		block.PrevHash,
 	}, ":")

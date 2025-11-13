@@ -14,28 +14,28 @@
 
         {
             "pubkey": "9GQ46rqY238rk2neSwgidap9ww5zbAN4dyqyC7j5ZnBK",
-            "validatorURL": "http://localhost:7332",
-            "wssValidatorURL": "ws://localhost:9999"
+            "anchorURL": "http://localhost:7332",
+            "wssAnchorURL": "ws://localhost:9999"
         },
         {
             "pubkey": "6XvZpuCDjdvSuot3eLr24C1wqzcf2w4QqeDh9BnDKsNE",
-            "validatorURL": "http://localhost:7333",
-            "wssValidatorURL": "ws://localhost:9998"
+            "anchorURL": "http://localhost:7333",
+            "wssAnchorURL": "ws://localhost:9998"
         },
         {
             "pubkey": "GUbYLN5NqmRocMBHqS183r2FQRoUjhx1p5nKyyUBpntQ",
-            "validatorURL": "http://localhost:7334",
-            "wssValidatorURL": "ws://localhost:9997"
+            "anchorURL": "http://localhost:7334",
+            "wssAnchorURL": "ws://localhost:9997"
         },
                 {
             "pubkey": "3JAeBnsMedzxjCMNWQYcAXtwGVE9A5DBQyXgWBujtL9R",
-            "validatorURL": "http://localhost:7335",
-            "wssValidatorURL": "ws://localhost:9996"
+            "anchorURL": "http://localhost:7335",
+            "wssAnchorURL": "ws://localhost:9996"
         },
         {
             "pubkey": "EGU4u3Anwahbtbx8F1ZZgFQSg2u49EkrkqMERT9r3q1o",
-            "validatorURL": "http://localhost:7336",
-            "wssValidatorURL": "ws://localhost:9995"
+            "anchorURL": "http://localhost:7336",
+            "wssAnchorURL": "ws://localhost:9995"
         }
     ]
 }

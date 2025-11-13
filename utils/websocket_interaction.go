@@ -141,12 +141,12 @@ func OpenWebsocketConnectionsWithQuorum(quorum []string, wsConnMap map[string]*w
 		}
 
 		// Skip if no WS URL
-		if validatorStorage.WssValidatorUrl == "" {
+		if validatorStorage.WssAnchorUrl == "" {
 			continue
 		}
 
 		// Dial
-		conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssValidatorUrl, nil)
+		conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssAnchorUrl, nil)
 		if err != nil {
 			continue
 		}
@@ -270,12 +270,12 @@ func reconnectOnce(pubkey string, wsConnMap map[string]*websocket.Conn) {
 		return
 	}
 	var validatorStorage structures.AnchorsStorage
-	if err := json.Unmarshal(raw, &validatorStorage); err != nil || validatorStorage.WssValidatorUrl == "" {
+	if err := json.Unmarshal(raw, &validatorStorage); err != nil || validatorStorage.WssAnchorUrl == "" {
 		return
 	}
 
 	// Try a single dial attempt
-	conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssValidatorUrl, nil)
+	conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssAnchorUrl, nil)
 	if err != nil {
 		return
 	}

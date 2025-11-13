@@ -36,7 +36,7 @@ func RunAnchorsChains() {
 	go threads.EpochRotationThread()
 
 	//✅ 2.Share our blocks within quorum members and get the finalization proofs
-	go threads.BlocksSharingAndProofsGrabingThread()
+	go threads.ShareBlockAndGetProofsThread()
 
 	//✅ 3.Start to generate blocks
 	go threads.BlocksGenerationThread()
