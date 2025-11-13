@@ -79,7 +79,7 @@ In the same shell where you stored the env variable - run
 ./modulr
 ```
 
-**This should run the local testnet with a single validator which generates blocks**
+**This should run the local testnet with a single anchor which generates blocks**
 
 ![alt text](images/shell.png)
 
