@@ -126,34 +126,34 @@ func OpenWebsocketConnectionsWithQuorum(quorum []string, wsConnMap map[string]*w
 	}
 	WEBSOCKET_CONNECTION_MUTEX.Unlock()
 
-	// Establish new connections for each validator in the quorum
-	for _, validatorPubkey := range quorum {
-		// Fetch validator metadata
-		raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(validatorPubkey+"_ANCHOR_STORAGE"), nil)
+	// Establish new connections for each anchor in the quorum
+	for _, anchorPubkey := range quorum {
+		// Fetch anchor metadata
+		raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(anchorPubkey+"_ANCHOR_STORAGE"), nil)
 		if err != nil {
 			continue
 		}
 
 		// Parse metadata
-		var validatorStorage structures.AnchorsStorage
-		if err := json.Unmarshal(raw, &validatorStorage); err != nil {
+		var anchorStorage structures.AnchorsStorage
+		if err := json.Unmarshal(raw, &anchorStorage); err != nil {
 			continue
 		}
 
 		// Skip if no WS URL
-		if validatorStorage.WssAnchorUrl == "" {
+		if anchorStorage.WssAnchorUrl == "" {
 			continue
 		}
 
 		// Dial
-		conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssAnchorUrl, nil)
+		conn, _, err := websocket.DefaultDialer.Dial(anchorStorage.WssAnchorUrl, nil)
 		if err != nil {
 			continue
 		}
 
 		// Store in the shared map under lock
 		WEBSOCKET_CONNECTION_MUTEX.Lock()
-		wsConnMap[validatorPubkey] = conn
+		wsConnMap[anchorPubkey] = conn
 		WEBSOCKET_CONNECTION_MUTEX.Unlock()
 	}
 }
@@ -264,18 +264,18 @@ func getWriteMu(id string) *sync.Mutex {
 
 func reconnectOnce(pubkey string, wsConnMap map[string]*websocket.Conn) {
 
-	// Get validator metadata
+	// Get anchor metadata
 	raw, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(pubkey+"_ANCHOR_STORAGE"), nil)
 	if err != nil {
 		return
 	}
-	var validatorStorage structures.AnchorsStorage
-	if err := json.Unmarshal(raw, &validatorStorage); err != nil || validatorStorage.WssAnchorUrl == "" {
+	var anchorStorage structures.AnchorsStorage
+	if err := json.Unmarshal(raw, &anchorStorage); err != nil || anchorStorage.WssAnchorUrl == "" {
 		return
 	}
 
 	// Try a single dial attempt
-	conn, _, err := websocket.DefaultDialer.Dial(validatorStorage.WssAnchorUrl, nil)
+	conn, _, err := websocket.DefaultDialer.Dial(anchorStorage.WssAnchorUrl, nil)
 	if err != nil {
 		return
 	}

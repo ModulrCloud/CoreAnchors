@@ -5,7 +5,6 @@ import (
 
 	"github.com/modulrcloud/modulr-anchors-core/databases"
 	"github.com/modulrcloud/modulr-anchors-core/globals"
-	"github.com/modulrcloud/modulr-anchors-core/handlers"
 	"github.com/modulrcloud/modulr-anchors-core/structures"
 
 	"github.com/syndtr/goleveldb/leveldb"
@@ -20,30 +19,24 @@ func OpenDb(dbName string) *leveldb.DB {
 	return db
 }
 
-func GetAnchorFromApprovementThreadState(validatorPubkey string) *structures.AnchorsStorage {
+func GetAnchorFromApprovementThreadState(anchorPubkey string) *structures.AnchorsStorage {
 
-	validatorStorageKey := validatorPubkey + "_ANCHOR_STORAGE"
+	anchorStorageKey := anchorPubkey + "_ANCHOR_STORAGE"
 
-	if val, ok := handlers.APPROVEMENT_THREAD_METADATA.Handler.ValidatorsStoragesCache[validatorStorageKey]; ok {
-		return val
-	}
-
-	data, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(validatorStorageKey), nil)
+	data, err := databases.APPROVEMENT_THREAD_METADATA.Get([]byte(anchorStorageKey), nil)
 
 	if err != nil {
 		return nil
 	}
 
-	var validatorStorage structures.AnchorsStorage
+	var anchorStorage structures.AnchorsStorage
 
-	err = json.Unmarshal(data, &validatorStorage)
+	err = json.Unmarshal(data, &anchorStorage)
 
 	if err != nil {
 		return nil
 	}
 
-	handlers.APPROVEMENT_THREAD_METADATA.Handler.ValidatorsStoragesCache[validatorStorageKey] = &validatorStorage
-
-	return &validatorStorage
+	return &anchorStorage
 
 }

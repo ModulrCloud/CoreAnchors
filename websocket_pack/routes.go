@@ -40,7 +40,7 @@ func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *
 
 	if itsLeader {
 
-		localVotingDataForLeader := structures.NewLeaderVotingStatTemplate()
+		localVotingDataForLeader := structures.NewVotingStatTemplate()
 
 		localVotingDataRaw, err := databases.FINALIZATION_VOTING_STATS.Get([]byte(strconv.Itoa(epochIndex)+":"+parsedRequest.Block.Creator), nil)
 
@@ -60,7 +60,7 @@ func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *
 
 			previousBlockIndex := int(parsedRequest.Block.Index - 1)
 
-			var futureVotingDataToStore structures.LeaderVotingStat
+			var futureVotingDataToStore structures.VotingStat
 
 			if parsedRequest.Block.VerifySignature() && !utils.SignalAboutEpochRotationExists(epochIndex) {
 
@@ -74,7 +74,7 @@ func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *
 
 				} else {
 
-					futureVotingDataToStore = structures.LeaderVotingStat{
+					futureVotingDataToStore = structures.VotingStat{
 
 						Index: previousBlockIndex,
 
