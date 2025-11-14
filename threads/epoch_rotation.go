@@ -88,7 +88,7 @@ func EpochRotationThread() {
 
 				}
 
-				utils.LogWithTime("Epoch on approvement thread was updated => "+nextEpochHash+"#"+strconv.Itoa(nextEpochId), utils.GREEN_COLOR)
+				utils.LogWithTime("Epoch was updated => "+nextEpochHash+"#"+strconv.Itoa(nextEpochId), utils.GREEN_COLOR)
 
 				handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
 
