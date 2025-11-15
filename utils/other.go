@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/modulrcloud/modulr-anchors-core/databases"
+	"github.com/modulrcloud/modulr-anchors-core/globals"
 	"github.com/modulrcloud/modulr-anchors-core/structures"
 
 	"lukechampine.com/blake3"
@@ -33,12 +34,6 @@ const (
 )
 
 var SHUTDOWN_ONCE sync.Once
-
-var kernelBanner = []string{
-	"modulr anchors kernel bootstrap",
-	"consensus mesh primed • transport warm",
-	"telemetry uplink locked • shell glow ready",
-}
 
 func GracefulShutdown() {
 
@@ -72,78 +67,73 @@ func LogWithTime(msg, msgColor string) {
 }
 
 func PrintKernelBanner() {
+	lines := kernelBannerLines()
+	if len(lines) == 0 {
+		return
+	}
 	PrintShellDivider()
-	textColors := []string{CYAN_COLOR, GREEN_COLOR, YELLOW_COLOR, MAGENTA_COLOR, WHITE_COLOR}
-	accentPalette := []string{"\u001b[38;5;81m", "\u001b[38;5;117m", "\u001b[38;5;159m"}
-	maxWidth := 0
-	for _, line := range kernelBanner {
-		if len(line) > maxWidth {
-			maxWidth = len(line)
+	width := 0
+	for _, line := range lines {
+		if len(line) > width {
+			width = len(line)
 		}
 	}
-	innerWidth := maxWidth + 2
-	LogWithTime(buildBannerBorder('╭', '╮', innerWidth, accentPalette), "")
-	for idx, line := range kernelBanner {
-		textColor := textColors[idx%len(textColors)]
-		frameColor := accentPalette[idx%len(accentPalette)]
-		LogWithTime(buildBannerLine(line, maxWidth, frameColor, textColor), "")
+	top := buildPlainBorder(width)
+	LogWithTime(top, "")
+	for _, line := range lines {
+		LogWithTime(buildPlainLine(line, width), "")
 	}
-	LogWithTime(buildBannerBorder('╰', '╯', innerWidth, accentPalette), "")
+	LogWithTime(top, "")
 	PrintShellDivider()
 }
 
 func PrintShellDivider() {
-	palette := []string{CYAN_COLOR, MAGENTA_COLOR, YELLOW_COLOR, GREEN_COLOR}
-	glyphs := []rune{'╺', '━', '╸', '╾'}
-	var builder strings.Builder
-	width := 48
-	for i := 0; i < width; i++ {
-		builder.WriteString(palette[i%len(palette)])
-		builder.WriteRune(glyphs[i%len(glyphs)])
-	}
-	builder.WriteString(RESET_COLOR)
-	LogWithTime(builder.String(), "")
+	LogWithTime(strings.Repeat("-", 60), "")
 }
 
-func buildBannerBorder(left, right rune, innerWidth int, palette []string) string {
-	var builder strings.Builder
-	paletteLen := len(palette)
-	for idx := 0; idx < paletteLen; idx++ {
-		if palette[idx] == "" {
-			palette[idx] = WHITE_COLOR
-		}
-	}
-	builder.WriteString(palette[0])
-	builder.WriteRune(left)
-	for i := 0; i < innerWidth; i++ {
-		builder.WriteString(palette[(i+1)%paletteLen])
-		builder.WriteRune('─')
-	}
-	builder.WriteString(palette[(innerWidth+1)%paletteLen])
-	builder.WriteRune(right)
-	builder.WriteString(RESET_COLOR)
-	return builder.String()
+func kernelBannerLines() []string {
+	cfg := globals.CONFIGURATION
+	params := globals.GENESIS.NetworkParameters
+	lines := []string{"modulr anchors kernel bootstrap"}
+	lines = append(lines, fmt.Sprintf("network id: %s", fallbackValue(globals.GENESIS.NetworkId)))
+	lines = append(lines, fmt.Sprintf("first epoch start: %d", globals.GENESIS.FirstEpochStartTimestamp))
+	lines = append(lines, fmt.Sprintf("http endpoint: %s", endpointLabel(cfg.Interface, cfg.Port)))
+	lines = append(lines, fmt.Sprintf("ws endpoint: %s", endpointLabel(cfg.WebSocketInterface, cfg.WebSocketPort)))
+	lines = append(lines, fmt.Sprintf("bootstrap peers: %d", len(cfg.BootstrapNodes)))
+	lines = append(lines, fmt.Sprintf("quorum size: %d / block time: %dms", params.QuorumSize, params.BlockTime))
+	return lines
 }
 
-func buildBannerLine(content string, maxWidth int, frameColor, textColor string) string {
-	var builder strings.Builder
-	padding := maxWidth - len(content)
+func endpointLabel(host string, port int) string {
+	if host == "" && port == 0 {
+		return "-"
+	}
+	if host == "" {
+		host = "0.0.0.0"
+	}
+	if port == 0 {
+		return host
+	}
+	return fmt.Sprintf("%s:%d", host, port)
+}
+
+func fallbackValue(value string) string {
+	if strings.TrimSpace(value) == "" {
+		return "-"
+	}
+	return value
+}
+
+func buildPlainBorder(width int) string {
+	return "+" + strings.Repeat("-", width+2) + "+"
+}
+
+func buildPlainLine(content string, width int) string {
+	padding := width - len(content)
 	if padding < 0 {
 		padding = 0
 	}
-	builder.WriteString(frameColor)
-	builder.WriteRune('│')
-	builder.WriteString(RESET_COLOR)
-	builder.WriteString(" ")
-	builder.WriteString(textColor)
-	builder.WriteString(content)
-	builder.WriteString(strings.Repeat(" ", padding))
-	builder.WriteString(RESET_COLOR)
-	builder.WriteString(" ")
-	builder.WriteString(frameColor)
-	builder.WriteRune('│')
-	builder.WriteString(RESET_COLOR)
-	return builder.String()
+	return fmt.Sprintf("| %s%s |", content, strings.Repeat(" ", padding))
 }
 
 func Blake3(data string) string {
