@@ -67,7 +67,7 @@ func AnchorRotationProof(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	creatorMutex := utils.GetBlockCreatorMutex(req.Creator)
+	creatorMutex := utils.GetBlockCreatorMutex(req.EpochIndex, req.Creator)
 	creatorMutex.Lock()
 	defer creatorMutex.Unlock()
 
