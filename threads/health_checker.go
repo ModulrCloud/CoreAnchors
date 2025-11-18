@@ -3,6 +3,7 @@ package threads
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -44,20 +45,23 @@ func checkCreatorsHealth() {
 	epochHandlers := handlers.APPROVEMENT_THREAD_METADATA.Handler.GetEpochHandlers()
 	handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RUnlock()
 
-	if len(epochHandlers) == 0 {
-		return
-	}
+	totalEpochs := len(epochHandlers)
+	totalCreators := 0
+	activeCreators := 0
+	stalledCreators := 0
 
 	for _, epochHandler := range epochHandlers {
 		if len(epochHandler.AnchorsRegistry) == 0 {
 			continue
 		}
 
+		totalCreators += len(epochHandler.AnchorsRegistry)
 		for _, creator := range epochHandler.AnchorsRegistry {
 			if utils.IsFinalizationProofsDisabled(epochHandler.Id, creator) {
 				continue
 			}
 
+			activeCreators++
 			votingStat, err := utils.ReadVotingStat(epochHandler.Id, creator)
 			if err != nil {
 				utils.LogWithTime(
@@ -67,15 +71,29 @@ func checkCreatorsHealth() {
 				continue
 			}
 
-			evaluateCreatorProgress(epochHandler.Id, creator, votingStat)
+			if evaluateCreatorProgress(epochHandler.Id, creator, votingStat) {
+				stalledCreators++
+			}
 		}
 	}
+
+	summaryColor := utils.GREEN_COLOR
+	metrics := []string{
+		coloredMetric("Epochs", totalEpochs, utils.CYAN_COLOR, summaryColor),
+		coloredMetric("Total_creators", totalCreators, utils.CYAN_COLOR, summaryColor),
+		coloredMetric("Active_creators", activeCreators, utils.CYAN_COLOR, summaryColor),
+		coloredMetric("Stalled_creators", stalledCreators, utils.CYAN_COLOR, summaryColor),
+	}
+	utils.LogWithTime(
+		fmt.Sprintf("Health checker: Iteration summary %s", strings.Join(metrics, " ")),
+		summaryColor,
+	)
 }
 
-func evaluateCreatorProgress(epochID int, creator string, current structures.VotingStat) {
+func evaluateCreatorProgress(epochID int, creator string, current structures.VotingStat) bool {
 	if current.Index < 0 {
 		storeSnapshot(epochID, creator, current)
-		return
+		return false
 	}
 
 	key := snapshotKey(epochID, creator)
@@ -86,7 +104,7 @@ func evaluateCreatorProgress(epochID int, creator string, current structures.Vot
 
 	if !hasPrevious {
 		storeSnapshot(epochID, creator, current)
-		return
+		return false
 	}
 
 	if previous.Index == current.Index && previous.Hash == current.Hash {
@@ -105,10 +123,11 @@ func evaluateCreatorProgress(epochID int, creator string, current structures.Vot
 		creatorSnapshots.Lock()
 		delete(creatorSnapshots.data, key)
 		creatorSnapshots.Unlock()
-		return
+		return true
 	}
 
 	storeSnapshot(epochID, creator, current)
+	return false
 }
 
 func storeSnapshot(epochID int, creator string, stat structures.VotingStat) {
