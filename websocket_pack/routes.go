@@ -17,18 +17,23 @@ import (
 	"github.com/lxzan/gws"
 )
 
-func getCreatorMutex(epochIndex int, creator string, anchorsRegistry []string) (*sync.Mutex, bool) {
+func getBlockCreatorMutex(epochIndex int, creator string, anchorsRegistry []string) (*sync.Mutex, bool) {
+
 	allowed := false
+
 	for _, anchor := range anchorsRegistry {
 		if anchor == creator {
 			allowed = true
 			break
 		}
 	}
+
 	if !allowed {
 		return nil, false
 	}
+
 	return utils.GetBlockCreatorMutex(epochIndex, creator), true
+
 }
 
 func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *gws.Conn) {
@@ -43,7 +48,9 @@ func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *
 
 	reqEpochID := parsedRequest.Block.Epoch
 	epochHandlers := handlers.APPROVEMENT_THREAD_METADATA.Handler.GetEpochHandlers()
+
 	var epochHandler *structures.EpochDataHandler
+
 	for idx := range epochHandlers {
 		candidate := epochHandlers[idx]
 		fullID := candidate.Hash + "#" + strconv.Itoa(candidate.Id)
@@ -58,7 +65,7 @@ func GetFinalizationProof(parsedRequest WsFinalizationProofRequest, connection *
 
 	epochIndex := epochHandler.Id
 
-	creatorMutex, allowed := getCreatorMutex(epochIndex, parsedRequest.Block.Creator, epochHandler.AnchorsRegistry)
+	creatorMutex, allowed := getBlockCreatorMutex(epochIndex, parsedRequest.Block.Creator, epochHandler.AnchorsRegistry)
 
 	if !allowed {
 		return

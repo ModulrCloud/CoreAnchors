@@ -79,10 +79,10 @@ func checkCreatorsHealth() {
 
 	summaryColor := utils.GREEN_COLOR
 	metrics := []string{
-		coloredMetric("Epochs", totalEpochs, utils.CYAN_COLOR, summaryColor),
-		coloredMetric("Total_creators", totalCreators, utils.CYAN_COLOR, summaryColor),
-		coloredMetric("Active_creators", activeCreators, utils.CYAN_COLOR, summaryColor),
-		coloredMetric("Stalled_creators", stalledCreators, utils.CYAN_COLOR, summaryColor),
+		utils.ColoredMetric("Epochs", totalEpochs, utils.CYAN_COLOR, summaryColor),
+		utils.ColoredMetric("Total_creators", totalCreators, utils.CYAN_COLOR, summaryColor),
+		utils.ColoredMetric("Active_creators", activeCreators, utils.CYAN_COLOR, summaryColor),
+		utils.ColoredMetric("Stalled_creators", stalledCreators, utils.CYAN_COLOR, summaryColor),
 	}
 	utils.LogWithTime(
 		fmt.Sprintf("Health checker: Iteration summary %s", strings.Join(metrics, " ")),

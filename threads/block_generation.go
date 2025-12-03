@@ -16,6 +16,7 @@ import (
 )
 
 func getGenerationMetadata(epochFullID string) *structures.GenerationThreadMetadataHandler {
+
 	handlers.GENERATION_THREAD_METADATA.Lock()
 	defer handlers.GENERATION_THREAD_METADATA.Unlock()
 
@@ -35,16 +36,25 @@ func getGenerationMetadata(epochFullID string) *structures.GenerationThreadMetad
 }
 
 func removeGenerationMetadata(epochFullID string) {
+
 	handlers.GENERATION_THREAD_METADATA.Lock()
+
 	defer handlers.GENERATION_THREAD_METADATA.Unlock()
+
 	delete(handlers.GENERATION_THREAD_METADATA.Handlers, epochFullID)
+
 }
 
 func BlocksGenerationThread() {
+
 	for {
+
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RLock()
+
 		blockTime := handlers.APPROVEMENT_THREAD_METADATA.Handler.NetworkParameters.BlockTime
+
 		epochHandlers := handlers.APPROVEMENT_THREAD_METADATA.Handler.GetEpochHandlers()
+
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RUnlock()
 
 		for idx := range epochHandlers {
@@ -53,30 +63,41 @@ func BlocksGenerationThread() {
 
 		time.Sleep(time.Duration(blockTime) * time.Millisecond)
 	}
+
 }
 
 func generateBlock(epochHandlerRef *structures.EpochDataHandler) {
+
 	if epochHandlerRef == nil {
 		return
 	}
 
 	epochFullID := epochHandlerRef.Hash + "#" + strconv.Itoa(epochHandlerRef.Id)
+
 	epochIndex := epochHandlerRef.Id
 
 	runtime := ensureFinalizationRuntime(epochHandlerRef)
+
 	runtime.Lock()
-	acceptedIndex := runtime.Grabber.AcceptedIndex
+
+	alreadyApprovedIndex := runtime.Grabber.AcceptedIndex
+
 	runtime.Unlock()
 
 	metadata := getGenerationMetadata(epochFullID)
 
 	handlers.GENERATION_THREAD_METADATA.Lock()
+
 	if metadata.EpochFullId != epochFullID {
+
 		metadata.EpochFullId = epochFullID
 		metadata.PrevHash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 		metadata.NextIndex = 0
+
 	}
-	shouldGenerateBlocks := metadata.NextIndex <= acceptedIndex+1
+
+	shouldGenerateBlocks := metadata.NextIndex <= alreadyApprovedIndex+1
+
 	handlers.GENERATION_THREAD_METADATA.Unlock()
 
 	if !shouldGenerateBlocks {
@@ -84,9 +105,11 @@ func generateBlock(epochHandlerRef *structures.EpochDataHandler) {
 	}
 
 	fields := make(map[string]string, len(globals.CONFIGURATION.ExtraDataToBlock))
+
 	for key, value := range globals.CONFIGURATION.ExtraDataToBlock {
 		fields[key] = value
 	}
+
 	extraData := structures.BlockExtraData{
 		Fields:                   fields,
 		RotationProofs:           globals.DrainRotationProofsFromMempool(),
@@ -96,27 +119,39 @@ func generateBlock(epochHandlerRef *structures.EpochDataHandler) {
 	blockDbAtomicBatch := new(leveldb.Batch)
 
 	blockCandidate := block_pack.NewBlock(extraData, epochFullID, metadata)
+
 	blockHash := blockCandidate.GetHash()
+
 	blockCandidate.SignBlock()
 
 	blockID := strconv.Itoa(epochIndex) + ":" + globals.CONFIGURATION.PublicKey + ":" + strconv.Itoa(blockCandidate.Index)
+
 	utils.LogWithTime("New block generated "+blockID+" (hash: "+blockHash[:8]+"...)", utils.CYAN_COLOR)
 
 	blockBytes, serializeErr := json.Marshal(blockCandidate)
+
 	if serializeErr != nil {
 		return
 	}
 
 	handlers.GENERATION_THREAD_METADATA.Lock()
+
 	metadata.PrevHash = blockHash
+
 	metadata.NextIndex++
+
 	handlers.GENERATION_THREAD_METADATA.Unlock()
 
 	if gtBytes, err := json.Marshal(metadata); err == nil {
+
 		blockDbAtomicBatch.Put([]byte(blockID), blockBytes)
+
 		blockDbAtomicBatch.Put([]byte("GT:"+epochFullID), gtBytes)
+
 		if err := databases.BLOCKS.Write(blockDbAtomicBatch, nil); err != nil {
 			panic("Can't store GT and block candidate")
 		}
+
 	}
+
 }

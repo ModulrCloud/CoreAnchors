@@ -142,6 +142,13 @@ func displayWidth(s string) int {
 	return utf8.RuneCountInString(s)
 }
 
+func ColoredMetric(label string, value interface{}, accentColor, baseColor string) string {
+	if accentColor == "" {
+		return fmt.Sprintf("%s=%v", label, value)
+	}
+	return fmt.Sprintf("%s%s=%v%s", accentColor, label, value, baseColor)
+}
+
 func Blake3(data string) string {
 
 	blake3Hash := blake3.Sum256([]byte(data))

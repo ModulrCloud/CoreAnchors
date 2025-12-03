@@ -15,20 +15,27 @@ var blockCreatorMutexRegistry = struct {
 // different epochs, allowing concurrent proof generation across epochs while
 // keeping per-epoch requests serialized.
 func GetBlockCreatorMutex(epochIndex int, creator string) *sync.Mutex {
+
 	key := strconv.Itoa(epochIndex) + ":" + creator
+
 	blockCreatorMutexRegistry.RLock()
 	mutex, ok := blockCreatorMutexRegistry.data[key]
 	blockCreatorMutexRegistry.RUnlock()
+
 	if ok {
 		return mutex
 	}
 
 	blockCreatorMutexRegistry.Lock()
 	defer blockCreatorMutexRegistry.Unlock()
+
 	if mutex, ok = blockCreatorMutexRegistry.data[key]; ok {
 		return mutex
 	}
+
 	mutex = &sync.Mutex{}
+
 	blockCreatorMutexRegistry.data[key] = mutex
+
 	return mutex
 }
