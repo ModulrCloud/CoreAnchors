@@ -18,8 +18,6 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-const zeroPrevHash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-
 func RunAnchorsChains() {
 
 	if err := prepareAnchorsChains(); err != nil {
@@ -253,7 +251,7 @@ func loadGenerationThreadMetadata() error {
 		if _, ok := handlers.GENERATION_THREAD_METADATA.Handlers[epochFullID]; !ok {
 			handlers.GENERATION_THREAD_METADATA.Handlers[epochFullID] = &structures.GenerationThreadMetadataHandler{
 				EpochFullId: epochFullID,
-				PrevHash:    zeroPrevHash,
+				PrevHash:    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
 				NextIndex:   0,
 			}
 		}

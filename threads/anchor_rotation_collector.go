@@ -106,7 +106,7 @@ func processCreatorRotation(epochHandler *structures.EpochDataHandler, creator s
 		return true, false
 	}
 
-	proof := structures.AnchorRotationProofBundle{
+	proof := structures.AnchorRotationProof{
 		EpochIndex: epochHandler.Id,
 		Creator:    creator,
 		VotingStat: stat,
@@ -189,8 +189,8 @@ func postJSON(url string, payload []byte) ([]byte, int, error) {
 	return body, resp.StatusCode, nil
 }
 
-func broadcastRotationProof(epochHandler *structures.EpochDataHandler, proof structures.AnchorRotationProofBundle) {
-	payload := structures.AcceptExtraDataRequest{RotationProofs: []structures.AnchorRotationProofBundle{proof}}
+func broadcastRotationProof(epochHandler *structures.EpochDataHandler, proof structures.AnchorRotationProof) {
+	payload := structures.AcceptExtraDataRequest{RotationProofs: []structures.AnchorRotationProof{proof}}
 	body, _ := json.Marshal(payload)
 	for _, member := range utils.GetQuorumUrlsAndPubkeys(epochHandler) {
 		if member.PubKey == globals.CONFIGURATION.PublicKey || member.Url == "" {

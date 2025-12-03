@@ -53,7 +53,7 @@ func AcceptExtraData(ctx *fasthttp.RequestCtx) {
 	ctx.Write(payload)
 }
 
-func storeRotationProofFromRequest(proof structures.AnchorRotationProofBundle) error {
+func storeRotationProofFromRequest(proof structures.AnchorRotationProof) error {
 	epochHandler := getEpochHandlerByID(proof.EpochIndex)
 	if epochHandler == nil {
 		return fmt.Errorf("epoch %d is not tracked", proof.EpochIndex)
@@ -94,7 +94,7 @@ func storeRotationProofFromRequest(proof structures.AnchorRotationProofBundle) e
 	return nil
 }
 
-func validateRotationProofBundle(proof *structures.AnchorRotationProofBundle, epochHandler *structures.EpochDataHandler) error {
+func validateRotationProofBundle(proof *structures.AnchorRotationProof, epochHandler *structures.EpochDataHandler) error {
 	if proof.VotingStat.Index < 0 || proof.VotingStat.Hash == "" {
 		return fmt.Errorf("invalid voting stat")
 	}

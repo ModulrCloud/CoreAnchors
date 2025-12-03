@@ -15,11 +15,17 @@ import (
 )
 
 func EpochRotationThread() {
+
 	for {
+
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RLock()
+
 		handlerCopy := handlers.APPROVEMENT_THREAD_METADATA.Handler
+
 		currentEpoch := handlerCopy.GetEpochHandler()
+
 		networkParams := handlerCopy.GetNetworkParams()
+
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RUnlock()
 
 		if currentEpoch.Hash == "" {
@@ -33,43 +39,71 @@ func EpochRotationThread() {
 		}
 
 		globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(false)
+
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Lock()
 
 		handlerRef := &handlers.APPROVEMENT_THREAD_METADATA.Handler
+
 		latestIndex := len(handlerRef.SupportedEpochs) - 1
+
 		if latestIndex < 0 {
+
 			handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
+
 			globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(true)
+
 			time.Sleep(200 * time.Millisecond)
+
 			continue
+
 		}
+
 		epochHandlerRef := handlerRef.SupportedEpochs[latestIndex]
+
 		if utils.EpochStillFresh(&epochHandlerRef, &handlerRef.NetworkParameters) {
+
 			handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
+
 			globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(true)
+
 			time.Sleep(200 * time.Millisecond)
+
 			continue
+
 		}
 
 		keyBytes := []byte("EPOCH_HANDLER:" + strconv.Itoa(epochHandlerRef.Id))
 
 		valBytes, marshalErr := json.Marshal(epochHandlerRef)
+
 		if marshalErr != nil {
+
 			handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
+
 			globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(true)
+
 			panic("Failed to marshal epoch handler: " + marshalErr.Error())
+
 		}
+
 		if err := databases.EPOCH_DATA.Put(keyBytes, valBytes, nil); err != nil {
+
 			handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
+
 			globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(true)
+
 			panic("Failed to store epoch handler: " + err.Error())
+
 		}
 
 		atomicBatch := new(leveldb.Batch)
 
 		nextEpochId := epochHandlerRef.Id + 1
+
 		nextEpochHash := utils.Blake3(epochHandlerRef.Hash)
+
 		nextEpochQuorumSize := handlerRef.NetworkParameters.QuorumSize
+
 		nextEpochHandler := structures.EpochDataHandler{
 			Id:              nextEpochId,
 			Hash:            nextEpochHash,
@@ -81,23 +115,35 @@ func EpochRotationThread() {
 		handlerRef.SupportedEpochs = append(handlerRef.SupportedEpochs, nextEpochHandler)
 
 		if len(handlerRef.SupportedEpochs) > handlerRef.NetworkParameters.MaxEpochsToSupport {
+
 			dropped := handlerRef.SupportedEpochs[0]
+
 			handlerRef.SupportedEpochs = handlerRef.SupportedEpochs[1:]
+
 			keyValue := []byte("EPOCH_FINISH:" + strconv.Itoa(dropped.Id))
+
 			if err := databases.FINALIZATION_VOTING_STATS.Put(keyValue, []byte("TRUE"), nil); err != nil {
 				panic("Failed to mark epoch as finished: " + err.Error())
 			}
+
 			removeFinalizationRuntime(dropped.Id)
+
 			epochFullID := dropped.Hash + "#" + strconv.Itoa(dropped.Id)
+
 			removeGenerationMetadata(epochFullID)
+
 			if err := databases.BLOCKS.Delete([]byte("GT:"+epochFullID), nil); err != nil {
 				utils.LogWithTime("Failed to delete generation metadata: "+err.Error(), utils.RED_COLOR)
 			}
+
 		}
 
 		handlerRef.SyncEpochPointers()
+
 		jsonedHandler, _ := json.Marshal(handlerRef)
+
 		atomicBatch.Put([]byte("AT"), jsonedHandler)
+
 		if batchCommitErr := databases.APPROVEMENT_THREAD_METADATA.Write(atomicBatch, nil); batchCommitErr != nil {
 			panic("Error with writing batch to approvement thread db. Try to launch again")
 		}
@@ -105,8 +151,11 @@ func EpochRotationThread() {
 		utils.LogWithTime("Epoch was updated => "+nextEpochHash+"#"+strconv.Itoa(nextEpochId), utils.GREEN_COLOR)
 
 		handlers.APPROVEMENT_THREAD_METADATA.RWMutex.Unlock()
+
 		globals.FLOOD_PREVENTION_FLAG_FOR_ROUTES.Store(true)
 
 		time.Sleep(200 * time.Millisecond)
+
 	}
+
 }

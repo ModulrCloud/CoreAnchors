@@ -1,5 +1,12 @@
 package structures
 
+type Genesis struct {
+	NetworkId                string            `json:"NETWORK_ID"`
+	FirstEpochStartTimestamp uint64            `json:"FIRST_EPOCH_START_TIMESTAMP"`
+	NetworkParameters        NetworkParameters `json:"NETWORK_PARAMETERS"`
+	Anchors                  []AnchorsStorage  `json:"ANCHORS"`
+}
+
 type NetworkParameters struct {
 	QuorumSize                         int   `json:"QUORUM_SIZE"`
 	EpochDuration                      int64 `json:"EPOCH_DURATION"`
@@ -26,11 +33,4 @@ type AnchorsStorage struct {
 	Pubkey       string `json:"pubkey"`
 	AnchorUrl    string `json:"anchorURL"`
 	WssAnchorUrl string `json:"wssAnchorURL"`
-}
-
-type Genesis struct {
-	NetworkId                string            `json:"NETWORK_ID"`
-	FirstEpochStartTimestamp uint64            `json:"FIRST_EPOCH_START_TIMESTAMP"`
-	NetworkParameters        NetworkParameters `json:"NETWORK_PARAMETERS"`
-	Anchors                  []AnchorsStorage  `json:"ANCHORS"`
 }

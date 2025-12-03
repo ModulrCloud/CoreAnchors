@@ -15,8 +15,6 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-const zeroPrevHash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-
 func getGenerationMetadata(epochFullID string) *structures.GenerationThreadMetadataHandler {
 	handlers.GENERATION_THREAD_METADATA.Lock()
 	defer handlers.GENERATION_THREAD_METADATA.Unlock()
@@ -27,7 +25,7 @@ func getGenerationMetadata(epochFullID string) *structures.GenerationThreadMetad
 
 	metadata := &structures.GenerationThreadMetadataHandler{
 		EpochFullId: epochFullID,
-		PrevHash:    zeroPrevHash,
+		PrevHash:    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
 		NextIndex:   0,
 	}
 
@@ -75,7 +73,7 @@ func generateBlock(epochHandlerRef *structures.EpochDataHandler) {
 	handlers.GENERATION_THREAD_METADATA.Lock()
 	if metadata.EpochFullId != epochFullID {
 		metadata.EpochFullId = epochFullID
-		metadata.PrevHash = zeroPrevHash
+		metadata.PrevHash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 		metadata.NextIndex = 0
 	}
 	shouldGenerateBlocks := metadata.NextIndex <= acceptedIndex+1

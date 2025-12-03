@@ -2,6 +2,12 @@ package structures
 
 import "strconv"
 
+type GenerationThreadMetadataHandler struct {
+	EpochFullId string `json:"epochFullId"`
+	PrevHash    string `json:"prevHash"`
+	NextIndex   int    `json:"nextIndex"`
+}
+
 type ApprovementThreadMetadataHandler struct {
 	NetworkParameters NetworkParameters  `json:"networkParameters"`
 	EpochDataHandler  EpochDataHandler   `json:"epoch"`
@@ -43,10 +49,4 @@ func (handler *ApprovementThreadMetadataHandler) SyncEpochPointers() {
 		return
 	}
 	handler.EpochDataHandler = handler.SupportedEpochs[len(handler.SupportedEpochs)-1]
-}
-
-type GenerationThreadMetadataHandler struct {
-	EpochFullId string `json:"epochFullId"`
-	PrevHash    string `json:"prevHash"`
-	NextIndex   int    `json:"nextIndex"`
 }

@@ -9,22 +9,22 @@ import (
 
 var MEMPOOL = struct {
 	sync.Mutex
-	anchorsRotationProofs     map[string]structures.AnchorRotationProofBundle
-	leadersFinalizationProofs map[string]structures.LeaderFinalizationProofBundle
+	anchorsRotationProofs     map[string]structures.AnchorRotationProof
+	leadersFinalizationProofs map[string]structures.LeaderFinalizationProof
 }{
-	anchorsRotationProofs:     make(map[string]structures.AnchorRotationProofBundle),
-	leadersFinalizationProofs: make(map[string]structures.LeaderFinalizationProofBundle),
+	anchorsRotationProofs:     make(map[string]structures.AnchorRotationProof),
+	leadersFinalizationProofs: make(map[string]structures.LeaderFinalizationProof),
 }
 
-func anchorRotationProofMempoolKey(proof structures.AnchorRotationProofBundle) string {
+func anchorRotationProofMempoolKey(proof structures.AnchorRotationProof) string {
 	return fmt.Sprintf("%d:%s:%d", proof.EpochIndex, proof.Creator, proof.VotingStat.Index)
 }
 
-func leaderFinalizationProofMempoolKey(proof structures.LeaderFinalizationProofBundle) string {
+func leaderFinalizationProofMempoolKey(proof structures.LeaderFinalizationProof) string {
 	return fmt.Sprintf("%s:%s:%d", proof.ChainId, proof.Leader, proof.VotingStat.Index)
 }
 
-func AddAnchorRotationProofToMempool(proof structures.AnchorRotationProofBundle) {
+func AddAnchorRotationProofToMempool(proof structures.AnchorRotationProof) {
 
 	MEMPOOL.Lock()
 
@@ -37,7 +37,7 @@ func AddAnchorRotationProofToMempool(proof structures.AnchorRotationProofBundle)
 
 }
 
-func AddLeaderFinalizationProofToMempool(proof structures.LeaderFinalizationProofBundle) {
+func AddLeaderFinalizationProofToMempool(proof structures.LeaderFinalizationProof) {
 
 	MEMPOOL.Lock()
 
@@ -50,7 +50,7 @@ func AddLeaderFinalizationProofToMempool(proof structures.LeaderFinalizationProo
 
 }
 
-func DrainRotationProofsFromMempool() []structures.AnchorRotationProofBundle {
+func DrainRotationProofsFromMempool() []structures.AnchorRotationProof {
 
 	MEMPOOL.Lock()
 	defer MEMPOOL.Unlock()
@@ -59,19 +59,19 @@ func DrainRotationProofsFromMempool() []structures.AnchorRotationProofBundle {
 		return nil
 	}
 
-	proofs := make([]structures.AnchorRotationProofBundle, 0, len(MEMPOOL.anchorsRotationProofs))
+	proofs := make([]structures.AnchorRotationProof, 0, len(MEMPOOL.anchorsRotationProofs))
 
 	for _, proof := range MEMPOOL.anchorsRotationProofs {
 		proofs = append(proofs, proof)
 	}
 
-	MEMPOOL.anchorsRotationProofs = make(map[string]structures.AnchorRotationProofBundle)
+	MEMPOOL.anchorsRotationProofs = make(map[string]structures.AnchorRotationProof)
 
 	return proofs
 
 }
 
-func DrainLeaderFinalizationProofsFromMempool() []structures.LeaderFinalizationProofBundle {
+func DrainLeaderFinalizationProofsFromMempool() []structures.LeaderFinalizationProof {
 
 	MEMPOOL.Lock()
 	defer MEMPOOL.Unlock()
@@ -80,13 +80,13 @@ func DrainLeaderFinalizationProofsFromMempool() []structures.LeaderFinalizationP
 		return nil
 	}
 
-	proofs := make([]structures.LeaderFinalizationProofBundle, 0, len(MEMPOOL.leadersFinalizationProofs))
+	proofs := make([]structures.LeaderFinalizationProof, 0, len(MEMPOOL.leadersFinalizationProofs))
 
 	for _, proof := range MEMPOOL.leadersFinalizationProofs {
 		proofs = append(proofs, proof)
 	}
 
-	MEMPOOL.leadersFinalizationProofs = make(map[string]structures.LeaderFinalizationProofBundle)
+	MEMPOOL.leadersFinalizationProofs = make(map[string]structures.LeaderFinalizationProof)
 
 	return proofs
 

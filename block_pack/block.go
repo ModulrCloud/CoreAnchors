@@ -37,7 +37,7 @@ func formatExtraData(extraData structures.BlockExtraData) string {
 	}
 
 	if len(extraData.RotationProofs) > 0 {
-		proofs := make([]structures.AnchorRotationProofBundle, len(extraData.RotationProofs))
+		proofs := make([]structures.AnchorRotationProof, len(extraData.RotationProofs))
 		copy(proofs, extraData.RotationProofs)
 		sort.Slice(proofs, func(i, j int) bool {
 			if proofs[i].EpochIndex != proofs[j].EpochIndex {
@@ -70,7 +70,7 @@ func formatExtraData(extraData structures.BlockExtraData) string {
 	}
 
 	if len(extraData.LeaderFinalizationProofs) > 0 {
-		proofs := make([]structures.LeaderFinalizationProofBundle, len(extraData.LeaderFinalizationProofs))
+		proofs := make([]structures.LeaderFinalizationProof, len(extraData.LeaderFinalizationProofs))
 		copy(proofs, extraData.LeaderFinalizationProofs)
 		sort.Slice(proofs, func(i, j int) bool {
 			if proofs[i].ChainId != proofs[j].ChainId {

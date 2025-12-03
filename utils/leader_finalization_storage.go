@@ -21,7 +21,7 @@ func leaderVotingStatKey(chainId, leader string) []byte {
 	return []byte(leaderVotingStatPrefix + chainId + ":" + leader)
 }
 
-func StoreLeaderFinalizationProof(proof structures.LeaderFinalizationProofBundle) error {
+func StoreLeaderFinalizationProof(proof structures.LeaderFinalizationProof) error {
 	payload, err := json.Marshal(proof)
 	if err != nil {
 		return err
@@ -29,8 +29,8 @@ func StoreLeaderFinalizationProof(proof structures.LeaderFinalizationProofBundle
 	return databases.FINALIZATION_VOTING_STATS.Put(leaderFinalizationKey(proof.ChainId, proof.Leader), payload, nil)
 }
 
-func LoadLeaderFinalizationProof(chainId, leader string) (structures.LeaderFinalizationProofBundle, error) {
-	var proof structures.LeaderFinalizationProofBundle
+func LoadLeaderFinalizationProof(chainId, leader string) (structures.LeaderFinalizationProof, error) {
+	var proof structures.LeaderFinalizationProof
 	raw, err := databases.FINALIZATION_VOTING_STATS.Get(leaderFinalizationKey(chainId, leader), nil)
 	if err != nil {
 		if errors.Is(err, ldbErrors.ErrNotFound) {

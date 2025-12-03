@@ -10,14 +10,34 @@ type AggregatedFinalizationProof struct {
 }
 
 func (afp *AggregatedFinalizationProof) UnmarshalJSON(data []byte) error {
+
 	type alias AggregatedFinalizationProof
+
 	var aux alias
+
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
+
 	if aux.Proofs == nil {
 		aux.Proofs = make(map[string]string)
 	}
+
 	*afp = AggregatedFinalizationProof(aux)
+
 	return nil
+
+}
+
+func (afp AggregatedFinalizationProof) MarshalJSON() ([]byte, error) {
+
+	type alias AggregatedFinalizationProof
+
+	aux := alias(afp)
+
+	if aux.Proofs == nil {
+		aux.Proofs = make(map[string]string)
+	}
+
+	return json.Marshal(aux)
 }

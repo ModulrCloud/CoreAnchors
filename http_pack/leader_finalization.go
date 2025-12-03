@@ -49,7 +49,7 @@ func AcceptLeaderFinalizationData(ctx *fasthttp.RequestCtx) {
 	ctx.Write(payload)
 }
 
-func storeLeaderFinalizationFromRequest(proof structures.LeaderFinalizationProofBundle) error {
+func storeLeaderFinalizationFromRequest(proof structures.LeaderFinalizationProof) error {
 	if proof.ChainId == "" || proof.Leader == "" {
 		return fmt.Errorf("missing chain or leader identifiers")
 	}
