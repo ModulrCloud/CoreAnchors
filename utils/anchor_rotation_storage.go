@@ -20,7 +20,7 @@ func StoreRotationProof(proof structures.AnchorRotationProof) error {
 	if err != nil {
 		return err
 	}
-	return databases.FINALIZATION_VOTING_STATS.Put(rotationProofKey(proof.EpochIndex, proof.Creator), payload, nil)
+	return databases.FINALIZATION_VOTING_STATS.Put(rotationProofKey(proof.EpochIndex, proof.Anchor), payload, nil)
 }
 
 func LoadRotationProof(epoch int, creator string) (structures.AnchorRotationProof, error) {

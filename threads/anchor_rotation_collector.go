@@ -108,7 +108,7 @@ func processCreatorRotation(epochHandler *structures.EpochDataHandler, creator s
 
 	proof := structures.AnchorRotationProof{
 		EpochIndex: epochHandler.Id,
-		Creator:    creator,
+		Anchor:     creator,
 		VotingStat: stat,
 		Signatures: signatures,
 	}
@@ -190,13 +190,13 @@ func postJSON(url string, payload []byte) ([]byte, int, error) {
 }
 
 func broadcastRotationProof(epochHandler *structures.EpochDataHandler, proof structures.AnchorRotationProof) {
-	payload := structures.AcceptExtraDataRequest{RotationProofs: []structures.AnchorRotationProof{proof}}
+	payload := structures.AcceptAnchorRotationProofRequest{RotationProofs: []structures.AnchorRotationProof{proof}}
 	body, _ := json.Marshal(payload)
 	for _, member := range utils.GetQuorumUrlsAndPubkeys(epochHandler) {
 		if member.PubKey == globals.CONFIGURATION.PublicKey || member.Url == "" {
 			continue
 		}
-		endpoint := strings.TrimRight(member.Url, "/") + "/accept_extra_data"
+		endpoint := strings.TrimRight(member.Url, "/") + "/accept_anchor_rotation_proof"
 		if _, _, err := postJSON(endpoint, body); err != nil {
 			utils.LogWithTime(fmt.Sprintf("anchor rotation: failed to broadcast proof to %s: %v", member.PubKey, err), utils.YELLOW_COLOR)
 		}

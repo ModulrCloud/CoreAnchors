@@ -11,7 +11,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func AcceptLeaderFinalizationData(ctx *fasthttp.RequestCtx) {
+func AcceptLeaderFinalizationProof(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
 	ctx.SetContentType("application/json")
 
@@ -45,7 +45,7 @@ func AcceptLeaderFinalizationData(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	payload, _ := json.Marshal(structures.AcceptExtraDataResponse{Accepted: accepted})
+	payload, _ := json.Marshal(structures.AcceptAnchorRotationProofResponse{Accepted: accepted})
 	ctx.Write(payload)
 }
 

@@ -17,7 +17,7 @@ var MEMPOOL = struct {
 }
 
 func anchorRotationProofMempoolKey(proof structures.AnchorRotationProof) string {
-	return fmt.Sprintf("%d:%s:%d", proof.EpochIndex, proof.Creator, proof.VotingStat.Index)
+	return fmt.Sprintf("%d:%s:%d", proof.EpochIndex, proof.Anchor, proof.VotingStat.Index)
 }
 
 func leaderFinalizationProofMempoolKey(proof structures.LeaderFinalizationProof) string {

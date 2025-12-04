@@ -7,7 +7,7 @@ import (
 
 type AnchorRotationProof struct {
 	EpochIndex int               `json:"epochIndex"`
-	Creator    string            `json:"creator"`
+	Anchor     string            `json:"anchor"`
 	VotingStat VotingStat        `json:"votingStat"`
 	Signatures map[string]string `json:"signatures"`
 }

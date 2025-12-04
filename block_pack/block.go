@@ -43,8 +43,8 @@ func formatExtraData(extraData structures.BlockExtraData) string {
 			if proofs[i].EpochIndex != proofs[j].EpochIndex {
 				return proofs[i].EpochIndex < proofs[j].EpochIndex
 			}
-			if proofs[i].Creator != proofs[j].Creator {
-				return proofs[i].Creator < proofs[j].Creator
+			if proofs[i].Anchor != proofs[j].Anchor {
+				return proofs[i].Anchor < proofs[j].Anchor
 			}
 			return proofs[i].VotingStat.Index < proofs[j].VotingStat.Index
 		})
@@ -61,7 +61,7 @@ func formatExtraData(extraData structures.BlockExtraData) string {
 			parts = append(parts, fmt.Sprintf(
 				"rotation:%d:%s:%d:%s:%s",
 				proof.EpochIndex,
-				proof.Creator,
+				proof.Anchor,
 				proof.VotingStat.Index,
 				proof.VotingStat.Hash,
 				strings.Join(sigParts, "|"),

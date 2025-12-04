@@ -17,11 +17,11 @@ type AnchorRotationProofResponse struct {
 	VotingStat *VotingStat `json:"votingStat,omitempty"`
 }
 
-type AcceptExtraDataRequest struct {
+type AcceptAnchorRotationProofRequest struct {
 	RotationProofs []AnchorRotationProof `json:"rotationProofs"`
 }
 
-type AcceptExtraDataResponse struct {
+type AcceptAnchorRotationProofResponse struct {
 	Accepted int `json:"accepted"`
 }
 
