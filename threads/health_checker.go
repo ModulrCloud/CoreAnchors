@@ -108,8 +108,7 @@ func evaluateCreatorProgress(epochID int, creator string, current structures.Vot
 	}
 
 	if previous.Index == current.Index && previous.Hash == current.Hash {
-		reason := fmt.Sprintf("health checker detected no progress for %s in epoch %d", creator, epochID)
-		if err := utils.DisableFinalizationProofsForCreator(epochID, creator, reason); err != nil {
+		if err := utils.DisableFinalizationProofsForCreator(epochID, creator); err != nil {
 			utils.LogWithTime(
 				fmt.Sprintf("health checker: failed to disable proofs for %s in epoch %d: %v", creator, epochID, err),
 				utils.RED_COLOR,

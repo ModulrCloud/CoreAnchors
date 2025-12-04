@@ -11,10 +11,8 @@ const blockCreatorHealthPrefix = "BLOCK_CREATOR_HEALTH:"
 
 // BlockCreatorHealthStatus stores metadata about why we stopped generating proofs for a creator.
 type BlockCreatorHealthStatus struct {
-	Epoch      int    `json:"epoch"`
-	Creator    string `json:"creator"`
-	DisabledAt int64  `json:"disabledAt"`
-	Reason     string `json:"reason"`
+	Epoch   int    `json:"epoch"`
+	Creator string `json:"creator"`
 }
 
 func buildBlockCreatorHealthKey(epochID int, creator string) []byte {
@@ -22,12 +20,10 @@ func buildBlockCreatorHealthKey(epochID int, creator string) []byte {
 }
 
 // DisableFinalizationProofsForCreator stores a persistent flag to stop generating proofs for the creator.
-func DisableFinalizationProofsForCreator(epochID int, creator, reason string) error {
+func DisableFinalizationProofsForCreator(epochID int, creator string) error {
 	status := BlockCreatorHealthStatus{
-		Epoch:      epochID,
-		Creator:    creator,
-		DisabledAt: GetUTCTimestampInMilliSeconds(),
-		Reason:     reason,
+		Epoch:   epochID,
+		Creator: creator,
 	}
 	payload, err := json.Marshal(status)
 	if err != nil {
