@@ -8,15 +8,15 @@ import (
 )
 
 type ExtraDataToBlock struct {
-	Rest                               map[string]string                              `json:"rest,omitempty"`
 	AggregatedAnchorRotationProofs     []structures.AggregatedAnchorRotaionProof      `json:"aggregatedAnchorRotationProofs,omitempty"`
 	AggregatedLeaderFinalizationProofs []structures.AggregatedLeaderFinalizationProof `json:"aggregatedLeaderFinalizationProofs,omitempty"`
+	Rest                               map[string]string                              `json:"rest,omitempty"`
 }
 
 type blockExtraDataAlias struct {
-	Rest                               map[string]string                              `json:"rest,omitempty"`
 	AggregatedAnchorRotationProofs     []structures.AggregatedAnchorRotaionProof      `json:"aggregatedAnchorRotationProofs,omitempty"`
 	AggregatedLeaderFinalizationProofs []structures.AggregatedLeaderFinalizationProof `json:"aggregatedLeaderFinalizationProofs,omitempty"`
+	Rest                               map[string]string                              `json:"rest,omitempty"`
 }
 
 func (extra ExtraDataToBlock) MarshalJSON() ([]byte, error) {

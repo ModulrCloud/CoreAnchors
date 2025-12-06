@@ -62,7 +62,7 @@ func storeAggregatedLeaderFinalizationFromRequest(proof structures.AggregatedLea
 
 	if existing, err := utils.LoadLeaderFinalizationProof(proof.EpochIndex, proof.Leader); err == nil {
 		if existing.VotingStat.Index >= proof.VotingStat.Index && existing.VotingStat.Hash == proof.VotingStat.Hash {
-			globals.AddLeaderFinalizationProofToMempool(existing)
+			globals.MEMPOOL.AddAggregatedLeaderFinalizationProof(existing)
 			return nil
 		}
 	}
@@ -71,6 +71,6 @@ func storeAggregatedLeaderFinalizationFromRequest(proof structures.AggregatedLea
 		return fmt.Errorf("store leader finalization proof: %w", err)
 	}
 
-	globals.AddLeaderFinalizationProofToMempool(proof)
+	globals.MEMPOOL.AddAggregatedLeaderFinalizationProof(proof)
 	return nil
 }

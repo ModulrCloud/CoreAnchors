@@ -93,7 +93,7 @@ func storeAggregatedRotationProofFromRequest(proof structures.AggregatedAnchorRo
 
 	if existing, err := utils.LoadRotationProof(proof.EpochIndex, proof.Anchor); err == nil {
 		if existing.VotingStat.Index >= proof.VotingStat.Index && existing.VotingStat.Hash == proof.VotingStat.Hash {
-			globals.AddAnchorRotationProofToMempool(existing)
+			globals.MEMPOOL.AddAggregatedAnchorRotationProof(existing)
 			return nil
 		}
 	}
@@ -102,7 +102,7 @@ func storeAggregatedRotationProofFromRequest(proof structures.AggregatedAnchorRo
 		return fmt.Errorf("store rotation proof: %w", err)
 	}
 
-	globals.AddAnchorRotationProofToMempool(proof)
+	globals.MEMPOOL.AddAggregatedAnchorRotationProof(proof)
 
 	return nil
 

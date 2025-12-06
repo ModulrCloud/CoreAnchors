@@ -7,26 +7,28 @@ import (
 	"github.com/modulrcloud/modulr-anchors-core/structures"
 )
 
-// Mempool to store two types of proofs:
-
-var mempool = struct {
+type Mempool struct {
 	sync.Mutex
 	aggregatedAnchorRotationProofs     map[string]structures.AggregatedAnchorRotaionProof      // proof for modulr-anchors-core logic to rotate anchors on demand
 	aggregatedLeaderFinalizationProofs map[string]structures.AggregatedLeaderFinalizationProof // proof for modulr-core logic to finalize last block by leader
-}{
+}
+
+// Mempool to store two types of proofs:
+
+var MEMPOOL = Mempool{
 	aggregatedAnchorRotationProofs:     make(map[string]structures.AggregatedAnchorRotaionProof),
 	aggregatedLeaderFinalizationProofs: make(map[string]structures.AggregatedLeaderFinalizationProof),
 }
 
-func anchorRotationProofMempoolKey(proof structures.AggregatedAnchorRotaionProof) string {
+func anchorMempoolKey(proof structures.AggregatedAnchorRotaionProof) string {
 	return fmt.Sprintf("%d:%s:%d", proof.EpochIndex, proof.Anchor, proof.VotingStat.Index)
 }
 
-func leaderFinalizationProofMempoolKey(proof structures.AggregatedLeaderFinalizationProof) string {
+func leaderMempoolKey(proof structures.AggregatedLeaderFinalizationProof) string {
 	return fmt.Sprintf("%d:%s:%d", proof.EpochIndex, proof.Leader, proof.VotingStat.Index)
 }
 
-func AddAnchorRotationProofToMempool(proof structures.AggregatedAnchorRotaionProof) {
+func (mempool *Mempool) AddAggregatedAnchorRotationProof(proof structures.AggregatedAnchorRotaionProof) {
 
 	mempool.Lock()
 
@@ -34,12 +36,12 @@ func AddAnchorRotationProofToMempool(proof structures.AggregatedAnchorRotaionPro
 		proof.Signatures = map[string]string{}
 	}
 
-	mempool.aggregatedAnchorRotationProofs[anchorRotationProofMempoolKey(proof)] = proof
+	mempool.aggregatedAnchorRotationProofs[anchorMempoolKey(proof)] = proof
 	mempool.Unlock()
 
 }
 
-func AddLeaderFinalizationProofToMempool(proof structures.AggregatedLeaderFinalizationProof) {
+func (mempool *Mempool) AddAggregatedLeaderFinalizationProof(proof structures.AggregatedLeaderFinalizationProof) {
 
 	mempool.Lock()
 
@@ -47,12 +49,12 @@ func AddLeaderFinalizationProofToMempool(proof structures.AggregatedLeaderFinali
 		proof.Signatures = map[string]string{}
 	}
 
-	mempool.aggregatedLeaderFinalizationProofs[leaderFinalizationProofMempoolKey(proof)] = proof
+	mempool.aggregatedLeaderFinalizationProofs[leaderMempoolKey(proof)] = proof
 	mempool.Unlock()
 
 }
 
-func DrainAnchorRotationProofsFromMempool() []structures.AggregatedAnchorRotaionProof {
+func (mempool *Mempool) DrainAggregatedAnchorRotationProofs() []structures.AggregatedAnchorRotaionProof {
 
 	mempool.Lock()
 	defer mempool.Unlock()
@@ -73,7 +75,7 @@ func DrainAnchorRotationProofsFromMempool() []structures.AggregatedAnchorRotaion
 
 }
 
-func DrainLeaderFinalizationProofsFromMempool() []structures.AggregatedLeaderFinalizationProof {
+func (mempool *Mempool) DrainAggregatedLeaderFinalizationProofs() []structures.AggregatedLeaderFinalizationProof {
 
 	mempool.Lock()
 	defer mempool.Unlock()
