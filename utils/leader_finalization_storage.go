@@ -12,31 +12,43 @@ import (
 )
 
 func leaderFinalizationKey(epochIndex int, leader string) []byte {
+
 	return []byte("LEADER_FINALIZATION_PROOF:" + strconv.Itoa(epochIndex) + ":" + leader)
+
 }
 
 func StoreLeaderFinalizationProof(proof structures.LeaderFinalizationProof) error {
+
 	payload, err := json.Marshal(proof)
+
 	if err != nil {
 		return err
 	}
+
 	return databases.FINALIZATION_VOTING_STATS.Put(leaderFinalizationKey(proof.EpochIndex, proof.Leader), payload, nil)
+
 }
 
 func LoadLeaderFinalizationProof(epochIndex int, leader string) (structures.LeaderFinalizationProof, error) {
+
 	var proof structures.LeaderFinalizationProof
+
 	raw, err := databases.FINALIZATION_VOTING_STATS.Get(leaderFinalizationKey(epochIndex, leader), nil)
+
 	if err != nil {
 		if errors.Is(err, ldbErrors.ErrNotFound) {
 			return proof, nil
 		}
 		return proof, err
 	}
+
 	if len(raw) == 0 {
 		return proof, nil
 	}
+
 	if err := json.Unmarshal(raw, &proof); err != nil {
 		return proof, err
 	}
 	return proof, nil
+
 }

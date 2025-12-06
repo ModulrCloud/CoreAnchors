@@ -6,8 +6,11 @@ import (
 )
 
 func getEpochHandlerByID(id int) *structures.EpochDataHandler {
+
 	handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RLock()
+
 	defer handlers.APPROVEMENT_THREAD_METADATA.RWMutex.RUnlock()
+
 	epochHandlers := handlers.APPROVEMENT_THREAD_METADATA.Handler.GetEpochHandlers()
 	for idx := range epochHandlers {
 		if epochHandlers[idx].Id == id {

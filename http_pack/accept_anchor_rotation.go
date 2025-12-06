@@ -16,6 +16,7 @@ import (
 )
 
 func AcceptAnchorRotationProofs(ctx *fasthttp.RequestCtx) {
+
 	ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
 	ctx.SetContentType("application/json")
 
@@ -26,6 +27,7 @@ func AcceptAnchorRotationProofs(ctx *fasthttp.RequestCtx) {
 	}
 
 	var req structures.AcceptAnchorRotationProofRequest
+
 	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
 		ctx.SetStatusCode(fasthttp.StatusBadRequest)
 		ctx.Write([]byte(`{"err":"invalid payload"}`))
@@ -39,6 +41,7 @@ func AcceptAnchorRotationProofs(ctx *fasthttp.RequestCtx) {
 	}
 
 	accepted := 0
+
 	for _, proof := range req.RotationProofs {
 		if err := storeRotationProofFromRequest(proof); err != nil {
 			ctx.SetStatusCode(fasthttp.StatusBadRequest)
@@ -49,26 +52,35 @@ func AcceptAnchorRotationProofs(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.SetStatusCode(fasthttp.StatusOK)
+
 	payload, _ := json.Marshal(structures.AcceptAnchorRotationProofResponse{Accepted: accepted})
+
 	ctx.Write(payload)
+
 }
 
 func storeRotationProofFromRequest(proof structures.AnchorRotationProof) error {
+
 	epochHandler := getEpochHandlerByID(proof.EpochIndex)
+
 	if epochHandler == nil {
 		return fmt.Errorf("epoch %d is not tracked", proof.EpochIndex)
 	}
+
 	if !creatorInEpoch(proof.Anchor, epochHandler.AnchorsRegistry) {
 		return fmt.Errorf("creator %s is not part of epoch %d", proof.Anchor, proof.EpochIndex)
 	}
 
 	majority := utils.GetQuorumMajority(epochHandler)
+
 	if len(proof.Signatures) < majority {
 		return fmt.Errorf("insufficient signatures: %d < %d", len(proof.Signatures), majority)
 	}
 
 	creatorMutex := utils.GetBlockCreatorMutex(proof.EpochIndex, proof.Anchor)
+
 	creatorMutex.Lock()
+
 	defer creatorMutex.Unlock()
 
 	if err := validateAnchorRotationProof(&proof, epochHandler); err != nil {
@@ -91,7 +103,9 @@ func storeRotationProofFromRequest(proof structures.AnchorRotationProof) error {
 	}
 
 	globals.AddAnchorRotationProofToMempool(proof)
+
 	return nil
+
 }
 
 func validateAnchorRotationProof(proof *structures.AnchorRotationProof, epochHandler *structures.EpochDataHandler) error {

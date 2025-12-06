@@ -32,13 +32,13 @@ func RunAnchorsChains() {
 
 	//_________________________ RUN SEVERAL LOGICAL THREADS _________________________
 
-	//✅ 1.Thread to rotate epoch
+	// ✅ 1.Thread to rotate epoch
 	go threads.EpochRotationThread()
 
-	//✅ 2.Share our blocks within quorum members and get the finalization proofs
+	// ✅ 2.Share our blocks within quorum members and get the finalization proofs
 	go threads.ShareBlockAndGetProofsThread()
 
-	//✅ 3.Start to generate blocks
+	// ✅ 3.Start to generate blocks
 	go threads.BlocksGenerationThread()
 
 	// ✅ 4.Start monitor anchors health

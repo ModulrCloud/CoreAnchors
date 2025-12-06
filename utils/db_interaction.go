@@ -13,10 +13,13 @@ import (
 func OpenDb(dbName string) *leveldb.DB {
 
 	db, err := leveldb.OpenFile(globals.CHAINDATA_PATH+"/DATABASES/"+dbName, nil)
+
 	if err != nil {
 		panic("Impossible to open db : " + dbName + " =>" + err.Error())
 	}
+
 	return db
+
 }
 
 func GetAnchorFromApprovementThreadState(anchorPubkey string) *structures.AnchorsStorage {

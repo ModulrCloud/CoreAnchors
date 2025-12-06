@@ -8,7 +8,9 @@ import (
 var blockCreatorMutexRegistry = struct {
 	sync.RWMutex
 	data map[string]*sync.Mutex
-}{data: make(map[string]*sync.Mutex)}
+}{
+	data: make(map[string]*sync.Mutex),
+}
 
 // GetBlockCreatorMutex returns a mutex dedicated to the provided creator within
 // a specific epoch. This lets the same creator obtain separate locks for
