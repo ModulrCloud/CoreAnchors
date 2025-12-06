@@ -60,14 +60,14 @@ func storeAggregatedLeaderFinalizationFromRequest(proof structures.AggregatedLea
 		return fmt.Errorf("missing signatures")
 	}
 
-	if existing, err := utils.LoadLeaderFinalizationProof(proof.EpochIndex, proof.Leader); err == nil {
+	if existing, err := utils.LoadAggregatedLeaderFinalizationProof(proof.EpochIndex, proof.Leader); err == nil {
 		if existing.VotingStat.Index >= proof.VotingStat.Index && existing.VotingStat.Hash == proof.VotingStat.Hash {
 			globals.MEMPOOL.AddAggregatedLeaderFinalizationProof(existing)
 			return nil
 		}
 	}
 
-	if err := utils.StoreLeaderFinalizationProof(proof); err != nil {
+	if err := utils.StoreAggregatedLeaderFinalizationProof(proof); err != nil {
 		return fmt.Errorf("store leader finalization proof: %w", err)
 	}
 

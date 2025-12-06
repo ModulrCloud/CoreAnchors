@@ -32,7 +32,7 @@ func getBlockCreatorMutex(epochIndex int, creator string, anchorsRegistry []stri
 		return nil, false
 	}
 
-	return utils.GetBlockCreatorMutex(epochIndex, creator), true
+	return globals.BLOCK_CREATORS_MUTEX_REGISTRY.GetMutex(epochIndex, creator), true
 
 }
 

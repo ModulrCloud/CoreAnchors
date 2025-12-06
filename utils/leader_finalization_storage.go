@@ -11,13 +11,13 @@ import (
 	ldbErrors "github.com/syndtr/goleveldb/leveldb/errors"
 )
 
-func leaderFinalizationKey(epochIndex int, leader string) []byte {
+func aggregatedLeaderFinalizationProofKey(epochIndex int, leader string) []byte {
 
-	return []byte("LEADER_FINALIZATION_PROOF:" + strconv.Itoa(epochIndex) + ":" + leader)
+	return []byte("ALFP:" + strconv.Itoa(epochIndex) + ":" + leader)
 
 }
 
-func StoreLeaderFinalizationProof(proof structures.AggregatedLeaderFinalizationProof) error {
+func StoreAggregatedLeaderFinalizationProof(proof structures.AggregatedLeaderFinalizationProof) error {
 
 	payload, err := json.Marshal(proof)
 
@@ -25,15 +25,15 @@ func StoreLeaderFinalizationProof(proof structures.AggregatedLeaderFinalizationP
 		return err
 	}
 
-	return databases.FINALIZATION_VOTING_STATS.Put(leaderFinalizationKey(proof.EpochIndex, proof.Leader), payload, nil)
+	return databases.FINALIZATION_VOTING_STATS.Put(aggregatedLeaderFinalizationProofKey(proof.EpochIndex, proof.Leader), payload, nil)
 
 }
 
-func LoadLeaderFinalizationProof(epochIndex int, leader string) (structures.AggregatedLeaderFinalizationProof, error) {
+func LoadAggregatedLeaderFinalizationProof(epochIndex int, leader string) (structures.AggregatedLeaderFinalizationProof, error) {
 
 	var proof structures.AggregatedLeaderFinalizationProof
 
-	raw, err := databases.FINALIZATION_VOTING_STATS.Get(leaderFinalizationKey(epochIndex, leader), nil)
+	raw, err := databases.FINALIZATION_VOTING_STATS.Get(aggregatedLeaderFinalizationProofKey(epochIndex, leader), nil)
 
 	if err != nil {
 		if errors.Is(err, ldbErrors.ErrNotFound) {

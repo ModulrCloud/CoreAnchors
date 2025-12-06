@@ -77,7 +77,7 @@ func storeAggregatedRotationProofFromRequest(proof structures.AggregatedAnchorRo
 		return fmt.Errorf("insufficient signatures: %d < %d", len(proof.Signatures), majority)
 	}
 
-	creatorMutex := utils.GetBlockCreatorMutex(proof.EpochIndex, proof.Anchor)
+	creatorMutex := globals.BLOCK_CREATORS_MUTEX_REGISTRY.GetMutex(proof.EpochIndex, proof.Anchor)
 
 	creatorMutex.Lock()
 
@@ -91,14 +91,14 @@ func storeAggregatedRotationProofFromRequest(proof structures.AggregatedAnchorRo
 		return fmt.Errorf("store voting stat: %w", err)
 	}
 
-	if existing, err := utils.LoadRotationProof(proof.EpochIndex, proof.Anchor); err == nil {
+	if existing, err := utils.LoadAggregatedAnchorRotationProof(proof.EpochIndex, proof.Anchor); err == nil {
 		if existing.VotingStat.Index >= proof.VotingStat.Index && existing.VotingStat.Hash == proof.VotingStat.Hash {
 			globals.MEMPOOL.AddAggregatedAnchorRotationProof(existing)
 			return nil
 		}
 	}
 
-	if err := utils.StoreRotationProof(proof); err != nil {
+	if err := utils.StoreAggregatedAnchorRotationProof(proof); err != nil {
 		return fmt.Errorf("store rotation proof: %w", err)
 	}
 

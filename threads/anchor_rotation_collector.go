@@ -84,15 +84,15 @@ func processCreatorRotation(epochHandler *structures.EpochDataHandler, creator s
 	if !utils.IsFinalizationProofsDisabled(epochHandler.Id, creator) {
 		return false, false
 	}
-	if utils.HasRotationProof(epochHandler.Id, creator) {
+	if utils.HasAggregatedAnchorRotationProof(epochHandler.Id, creator) {
 		return false, false
 	}
 
-	mutex := utils.GetBlockCreatorMutex(epochHandler.Id, creator)
+	mutex := globals.BLOCK_CREATORS_MUTEX_REGISTRY.GetMutex(epochHandler.Id, creator)
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	if !utils.IsFinalizationProofsDisabled(epochHandler.Id, creator) || utils.HasRotationProof(epochHandler.Id, creator) {
+	if !utils.IsFinalizationProofsDisabled(epochHandler.Id, creator) || utils.HasAggregatedAnchorRotationProof(epochHandler.Id, creator) {
 		return false, false
 	}
 
@@ -117,7 +117,7 @@ func processCreatorRotation(epochHandler *structures.EpochDataHandler, creator s
 		VotingStat: stat,
 		Signatures: signatures,
 	}
-	if err := utils.StoreRotationProof(proof); err != nil {
+	if err := utils.StoreAggregatedAnchorRotationProof(proof); err != nil {
 		utils.LogWithTime(fmt.Sprintf("anchor rotation: failed to persist proof for %s epoch %d: %v", creator, epochHandler.Id, err), utils.YELLOW_COLOR)
 		return true, false
 	}
